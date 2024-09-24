@@ -1,0 +1,204 @@
+# Data Wrangling with Base R
+
+## Data Frame
+
+-   table of data
+
+-   each column contains values of one variable
+
+-   each row contains one set of values from each column
+
+## creating a data frame
+
+-   use the data.frame() function
+
+```{r}
+df = data.frame(Name = c("A", "B"), Age = c(20,30))
+df
+```
+
+```{r}
+df = data.frame(Name = c('Rick','Dan','Jessica','Julia','Sophia'),
+                Salary = c(623.30,515.20,611.00,729.00,843.25),
+                Start_Date = c('2012-01-01',
+                                       '2013-09-23',
+                                       '2014-11-15',
+                                       '2014-05-11',
+                                       '2015-03-27'),
+                Gender = c('Male', 'Male', 'Female','Female','Female' ))
+df
+```
+
+## Functions
+
+**import:** read.csv
+
+```{r}
+df = read.csv("WHO-COVID-19-global-data.csv")
+```
+
+**overview:** str
+
+```{r}
+str(df)
+```
+
+-   gives type of data dealing with
+
+-   quality of data (missing values)
+
+**correct data type:**
+
+-   as.factor
+
+-   as.numeric
+
+-   as.Date
+
+-   as.character
+
+**check missing data**
+
+-   sum(is.na())
+
+-   checks number of missing values
+
+```{r}
+sum(is.na(df))
+```
+
+-   colSums((is.na))
+
+-   values in each column
+
+```{r}
+colSums(is.na(df))
+```
+
+## changing the name of a variable
+
+```{r}
+names(df)
+```
+
+```{r}
+names(df)[3] = "country_name"
+```
+
+## change the type of variable
+
+check type
+
+```{r}
+class(df$Date_reported)
+```
+
+change type
+
+```{r}
+df$Date_reported = as.Date(df$Date_reported)
+```
+
+## Simple Data Exploration
+
+```{r}
+summary(df)
+```
+
+### Statistics of continuous / date variable
+
+```{r}
+mean(df$Cumulative_deaths, na.rm = TRUE)
+```
+
+```{r}
+max(df$Cumulative_deaths, na.rm = TRUE)
+```
+
+```{r}
+summary(df$Date_reported)
+```
+
+### frequency of categorical variable
+
+```{r}
+table(df$WHO_region)
+```
+
+```{r}
+# % of the variable for each type
+prop.table(table(df$WHO_region))
+```
+
+### correlation of two continuous variables
+
+```{r}
+cor(df$Cumulative_cases, df$Cumulative_deaths)
+```
+
+### calculate a continuous by a categorical
+
+```{r}
+by(df$New_deaths, df$WHO_region, FUN = mean)
+```
+
+## create new variables
+
+*it is common to create new variables to analyze the data better*
+
+### 
+
+### binning continuous variable to a categorical variable
+
+```{r}
+df$Cases2 <- ifelse(df$Cases==0, 'No_new_cases', 'Has_new_cases')
+```
+
+```{r}
+str(df)
+```
+
+can we create a new variable with three categories using ifelse function?
+
+```{r}
+df$Cases3 = case_when(df$Cases < 22 ~ "Low",
+                      df$Cases < 486 ~ "Medium",
+                      TRUE ~ "High")
+```
+
+```{r}
+table(df$Cases3)
+```
+
+```{r}
+prop.table(table(df$Cases3))
+```
+
+## **binning continuous variable**
+
+creates different levels
+
+```{r}
+df$Death2 <- case_when(df$Death < 2 ~ 'low_death',
+                       df$Death < 5 ~ 'mid_death',
+                       TRUE ~ 'high_death')
+
+table(df$Death2)
+```
+
+## Subsetting by Columns
+
+```{r}
+df1 <- df[,c(1,3)]
+head(df1)
+```
+
+only contains days with cases greater than 1000
+
+```{r}
+df_high_cases =df[df$Cases > 1000, ]
+```
+
+```{r}
+str(df_high_cases)
+```

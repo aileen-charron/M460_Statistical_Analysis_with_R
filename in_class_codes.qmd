@@ -1,0 +1,24 @@
+---
+title: "Basic R InClass Codes"
+author: "Aileen Charron"
+format: html
+editor: visual
+---
+
+### Read in a csv file
+
+```{r}
+df <-  read.csv('https://bryantstats.github.io/math421/data/WHO-COVID-19-global-data.csv')
+```
+
+### Show the names of the columns
+
+```{r}
+names(df)
+```
+
+### structure of the data in general
+
+```{r}
+str(df)
+```

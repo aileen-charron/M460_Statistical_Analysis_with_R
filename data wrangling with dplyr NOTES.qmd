@@ -1,0 +1,120 @@
+---
+title: "Data Wrangling with Dplyr"
+author: "Aileen Charron"
+format: html
+editor: visual
+---
+
+# Data Wrangling with Dplyr
+
+## three ways to data wrangle
+
+-   base r
+
+-   dplyr (*most popular)*
+
+-   data.table
+
+## packages
+
+-   tidyverse
+
+-   ggplot2: visualization
+
+-   dplyr: data wrangling
+
+-   purrr: functional programming
+
+## read_csv
+
+use *read_csv* instead of *read.csv* to read the data
+
+```{r}
+df <- read_csv('https://covidtracking.com/data/download/all-states-history.csv')
+
+```
+
+-   *`read_csv`* is faster
+
+-   *`read_csv`* recognizing the types of data better
+
+```{r}
+df <- read_csv('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv')
+
+str(df)
+```
+
+-   data prints out nicely with *`read_csv`*
+
+```{r}
+df
+```
+
+## Pipe (%\>%)
+
+-   hotekey: ctrl + shift+ m
+
+## pipe operator
+
+-   is the same as f(x)
+
+```{r}
+x <- c(1:10)
+```
+
+conventional sum
+
+```{r}
+sum(x)
+```
+
+pipe
+
+```{r}
+x %>% sum
+```
+
+### nested function
+
+conventional
+
+```{r}
+log(sum(x))
+```
+
+pipe
+
+```{r}
+x %>% sum %>% log
+```
+
+# dplyr
+
+## five verbs of dplyr
+
+-   *`select()`* selects columns from data
+
+-   `filter()`filter rows of data
+
+-   `summarise()` summarizes data (calculating summary statistics)
+
+-   `arrange()` arrange data
+
+-   `mutate()` creates new variables
+
+### select
+
+select: select columns
+
+```{r}
+df <- read_csv('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv')
+df1 <-  select(df, state, date)
+```
+
+select with pipe
+
+```{r}
+df %>% select(state, date)
+```
+
+deselect data from the data

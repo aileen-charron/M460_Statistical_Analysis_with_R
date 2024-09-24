@@ -68,6 +68,9 @@ s4 =
 $$
 S = \frac{1}{1\cdot 2 \cdot 3}+\frac{1}{2 \cdot 3 \cdot 4}+...+\frac{1}{100\cdot 101 \cdot 102}
 $$
+```{r}
+s
+```
 
 5. Calculate: 
 
