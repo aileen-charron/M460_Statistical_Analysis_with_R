@@ -60,7 +60,15 @@ S = \frac{1}{1\cdot 2}+\frac{1}{2 \cdot 3}+...+\frac{1}{100\cdot 101}
 $$
 ```{r}
 s3 = rep(1, 100)
-s4 = 
+s4 = seq(1,100)
+
+s5 = seq(2,101)
+
+s6 <- s3 / (s4*s5)
+
+s7 <- sum(s6)
+
+s7
 ```
 
 4. Calculate: 
@@ -69,7 +77,16 @@ $$
 S = \frac{1}{1\cdot 2 \cdot 3}+\frac{1}{2 \cdot 3 \cdot 4}+...+\frac{1}{100\cdot 101 \cdot 102}
 $$
 ```{r}
-s
+s8 = rep(1,100)
+s9 = seq(1,100)
+s10 = seq(2,101)
+s11 = seq(3,102)
+
+s12 <- s8 / (s9*s10*s11)
+
+s13 <- sum(s12)
+
+s13
 ```
 
 5. Calculate: 
