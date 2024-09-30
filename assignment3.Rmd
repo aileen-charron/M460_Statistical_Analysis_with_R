@@ -163,23 +163,42 @@ df$Death3 = case_when(df$Death < 1171 ~ 'low_death',
 13. Find the average cases in Rhode Island in 2021
 
 ```{r}
-df_RI_2021 <- df[(df$State == 'Rhode Island')&(df$Date >= '2021-01-01') & (df$Date <= '2021-12-31'),]
 
+average_cases <- df %>%
+  filter(State == "Rhode Island", format(Date, "%Y") == "2021") %>%
+  summarize(average_cases = mean(Cases, na.rm = TRUE))
+
+print(average_cases)
 ```
 
-```{r}
-mean(df_RI_2021$Cases)
-```
-
-14. Find the median cases by weekdays in Rhode Island in 2021
+14. **Find the median cases by weekdays in Rhode Island in 2021**
 
 ```{r}
-df_RI_2021_weekday <- df_RI_2021[df_RI_2021$Weekdays == '']
+
+df$Date <- as.Date(df$Date)
+
+median_cases_weekdays <- df %>%
+  filter(State == "Rhode Island", format(Date, "%Y") == "2021") %>%
+  group_by(Weekdays) %>%
+  summarize(median_cases = median(Cases, na.rm = TRUE))
+
+print(median_cases_weekdays)
 ```
 
 13. Compare the median cases in Rhode Island in June, July, August and September in 2021.
 
-14. Find your own dataset, import it and implement the following functions on the data
+```{r}
+median_cases_months <- df %>%
+  filter(State == "Rhode Island", format(Date, "%Y") == "2021", 
+         format(Date, "%m") %in% c("06", "07", "08", "09")) %>%
+  mutate(Month = format(Date, "%B")) %>% 
+  group_by(Month) %>%
+  summarize(median_cases = median(Cases, na.rm = TRUE))
+
+print(median_cases_months)
+```
+
+13. Find your own dataset, import it and implement the following functions on the data
 
 ```{r}
 df <- read.csv('https://bryantstats.github.io/math421/data/titanic.csv')
@@ -283,4 +302,8 @@ df$Fare2 <- case_when(df$Fare < 8 ~ 'low_fare',
 
 -   From one categorical variable, create a new categorical variable with fewer categories
 
-based
+```{r}
+df$Simplified_Class <- ifelse(df$Pclass == 1 | df$Pclass == 2, 
+                              "Upper Class", 
+                              "Lower Class")
+```

@@ -11,7 +11,7 @@
 
 
 
-<title>README</title>
+<title>Assignment 3. Working with Data Frame. Base R Style</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,15 +348,366 @@ display: none;
 
 
 
+<h1 class="title toc-ignore">Assignment 3. Working with Data Frame. Base
+R Style</h1>
 
 </div>
 
 
-<div id="m461-statistical-analysis-with-r" class="section level1">
-<h1>M461-Statistical-Analysis-with-R</h1>
-<p>Assignment1: <a href="file:///C:/Users/student/Documents/M461-Statistical-Analysis-with-R/Assignment1.html">Assignment1</a></p>
-<p>Assignment2: <a href="file:///C:/Users/student/Documents/M461-Statistical-Analysis-with-R/assignment2.html">Assignment2</a></p>
-<p>Assignment3: <a href="file:///C:/Users/student/Documents/M461-Statistical-Analysis-with-R/assignment3.html">Assignment3</a></p>
+<p><strong><em>Submission</em></strong>: Submit the link on Github of
+the assignment to Canvas under Assignment 3.</p>
+<hr />
+<div id="problems" class="section level2">
+<h2>Problems</h2>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<ol style="list-style-type: decimal">
+<li><strong>Create the following data frame</strong></li>
+</ol>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Rank</th>
+<th align="left">Age</th>
+<th align="left">Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="left">28</td>
+<td align="left">Tom</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">34</td>
+<td align="left">Jack</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="left">29</td>
+<td align="left">Steve</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">42</td>
+<td align="left">Ricky</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>df = data.frame(Rank = c(0,1,2,3),
+                Age = c(28, 34, 29, 42),
+                Name = c(&quot;Tom&quot;, &quot;Jack&quot;, &quot;Steve&quot;, &quot;Ricky&quot;))
+df</code></pre>
+<pre><code>##   Rank Age  Name
+## 1    0  28   Tom
+## 2    1  34  Jack
+## 3    2  29 Steve
+## 4    3  42 Ricky</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Use <code>read.csv</code> to import the Covid19 Vaccination
+data from WHO: <a href="https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv">link</a>.</strong></li>
+</ol>
+<pre class="r"><code>df &lt;- read.csv(&quot;https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv&quot;)</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Show the names of the variables in the data</strong></li>
+</ol>
+<pre class="r"><code>names(df)</code></pre>
+<pre><code>## [1] &quot;date&quot;   &quot;state&quot;  &quot;fips&quot;   &quot;cases&quot;  &quot;deaths&quot;</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>How many columns and rows the data have?</strong></li>
+</ol>
+<pre class="r"><code>str(df)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    61942 obs. of  5 variables:
+##  $ date  : chr  &quot;2020-01-21&quot; &quot;2020-01-22&quot; &quot;2020-01-23&quot; &quot;2020-01-24&quot; ...
+##  $ state : chr  &quot;Washington&quot; &quot;Washington&quot; &quot;Washington&quot; &quot;Illinois&quot; ...
+##  $ fips  : int  53 53 53 17 53 6 17 53 4 6 ...
+##  $ cases : int  1 1 1 1 1 1 1 1 1 2 ...
+##  $ deaths: int  0 0 0 0 0 0 0 0 0 0 ...</code></pre>
+<p>61,942 rows &amp; 5 columns</p>
+<ol start="5" style="list-style-type: decimal">
+<li><strong>How many missing values are there? Show the missing values
+by columns. What variable has the most number of missing
+values?</strong></li>
+</ol>
+<pre class="r"><code>sum(is.na(df))</code></pre>
+<pre><code>## [1] 0</code></pre>
+<p>0 missing values</p>
+<pre class="r"><code>colSums(is.na(df))</code></pre>
+<pre><code>##   date  state   fips  cases deaths 
+##      0      0      0      0      0</code></pre>
+<p>0 missing values by each column</p>
+<p>no variable has missing values</p>
+<ol start="6" style="list-style-type: decimal">
+<li><strong>What is the class of the <code>date</code> column. Change
+the <code>date</code> columns to <code>date</code> type using the
+<code>as.Date</code> function. Show the new class of the
+<code>date</code> column.</strong></li>
+</ol>
+<pre class="r"><code>class(df$date)</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<p>date is classified as character</p>
+<pre class="r"><code>df$date = as.Date(df$date)</code></pre>
+<pre class="r"><code>class(df$date)</code></pre>
+<pre><code>## [1] &quot;Date&quot;</code></pre>
+<ol start="7" style="list-style-type: decimal">
+<li><strong>Capitalize the names of all the variables</strong></li>
+</ol>
+<pre class="r"><code>names(df)[1] = &quot;Date&quot;
+names(df)[2] = &quot;State&quot;
+names(df)[3] = &quot;Flips&quot;
+names(df)[4] = &quot;Cases&quot;
+names(df)[5] = &quot;Death&quot;</code></pre>
+<ol start="8" style="list-style-type: decimal">
+<li>Find the average number of cases per day. Find the maximum cases a
+day.</li>
+</ol>
+<pre class="r"><code>df_bydate &lt;- df[, c(&#39;Date&#39;, &#39;Cases&#39;)]</code></pre>
+<pre class="r"><code>max(df$Cases)</code></pre>
+<pre><code>## [1] 12169158</code></pre>
+<ol start="9" style="list-style-type: decimal">
+<li>How many states are there in the data?</li>
+</ol>
+<pre class="r"><code>n_distinct(df$State)</code></pre>
+<pre><code>## [1] 56</code></pre>
+<ol start="10" style="list-style-type: decimal">
+<li>Create a new variable <code>weekdays</code> to store the weekday for
+each rows.</li>
+</ol>
+<pre class="r"><code>df$Weekdays &lt;- weekdays(df$Date)</code></pre>
+<ol start="11" style="list-style-type: decimal">
+<li>Create the categorical variable <code>death2</code> variable taking
+the values as follows</li>
+</ol>
+<p><code>has_death</code> if there is a death that day</p>
+<p><code>no_death</code> if there is no death that day</p>
+<pre class="r"><code>df$Death2 &lt;- ifelse(df$Death==0,
+                    &#39;no_death&#39;,
+                    &#39;has_death&#39;)</code></pre>
+<p>Find the frequency and relative frequency of <code>no_death</code>
+and <code>has_death</code>.</p>
+<pre class="r"><code>table(df$Death2)</code></pre>
+<pre><code>## 
+## has_death  no_death 
+##     60790      1152</code></pre>
+<pre class="r"><code>prop.table(table(df$Death2))</code></pre>
+<pre><code>## 
+##  has_death   no_death 
+## 0.98140196 0.01859804</code></pre>
+<ol start="11" style="list-style-type: decimal">
+<li>Find the first quartile (Q1), second quartile (Q2) and and third
+quartile (Q3) of the variable <code>death</code>. (Hint: Use the
+<code>summary</code> function)</li>
+</ol>
+<pre class="r"><code>summary(df$Death)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##       0    1171    5035   11779   14912  104277</code></pre>
+<ol start="11" style="list-style-type: decimal">
+<li>Create the categorical variable <code>death3</code> variable taking
+the values as follows</li>
+</ol>
+<ul>
+<li><p><code>low_death</code> if the number of deaths smaller than the
+25 percentile (Q1)</p></li>
+<li><p><code>mid_death</code> if the number of deaths from Q1 to
+Q3</p></li>
+<li><p><code>high_death</code> if the number of deaths greater than
+Q3</p></li>
+</ul>
+<pre class="r"><code>library(dplyr)
+df$Death3 = case_when(df$Death &lt; 1171 ~ &#39;low_death&#39;,
+                    df$Death &lt; 14912 ~ &#39;mid_death&#39;,
+                    TRUE ~ &#39;high_death&#39;)</code></pre>
+<ol start="13" style="list-style-type: decimal">
+<li>Find the average cases in Rhode Island in 2021</li>
+</ol>
+<pre class="r"><code>average_cases &lt;- df %&gt;%
+  filter(State == &quot;Rhode Island&quot;, format(Date, &quot;%Y&quot;) == &quot;2021&quot;) %&gt;%
+  summarize(average_cases = mean(Cases, na.rm = TRUE))
+
+print(average_cases)</code></pre>
+<pre><code>##   average_cases
+## 1      154438.5</code></pre>
+<ol start="14" style="list-style-type: decimal">
+<li><strong>Find the median cases by weekdays in Rhode Island in
+2021</strong></li>
+</ol>
+<pre class="r"><code>df$Date &lt;- as.Date(df$Date)
+
+median_cases_weekdays &lt;- df %&gt;%
+  filter(State == &quot;Rhode Island&quot;, format(Date, &quot;%Y&quot;) == &quot;2021&quot;) %&gt;%
+  group_by(Weekdays) %&gt;%
+  summarize(median_cases = median(Cases, na.rm = TRUE))
+
+print(median_cases_weekdays)</code></pre>
+<pre><code>## # A tibble: 7 × 2
+##   Weekdays  median_cases
+##   &lt;chr&gt;            &lt;dbl&gt;
+## 1 Friday         152643 
+## 2 Monday         152605 
+## 3 Saturday       152578.
+## 4 Sunday         152578.
+## 5 Thursday       152683 
+## 6 Tuesday        152644.
+## 7 Wednesday      152676.</code></pre>
+<ol start="13" style="list-style-type: decimal">
+<li>Compare the median cases in Rhode Island in June, July, August and
+September in 2021.</li>
+</ol>
+<pre class="r"><code>median_cases_months &lt;- df %&gt;%
+  filter(State == &quot;Rhode Island&quot;, format(Date, &quot;%Y&quot;) == &quot;2021&quot;, 
+         format(Date, &quot;%m&quot;) %in% c(&quot;06&quot;, &quot;07&quot;, &quot;08&quot;, &quot;09&quot;)) %&gt;%
+  mutate(Month = format(Date, &quot;%B&quot;)) %&gt;% 
+  group_by(Month) %&gt;%
+  summarize(median_cases = median(Cases, na.rm = TRUE))
+
+print(median_cases_months)</code></pre>
+<pre><code>## # A tibble: 4 × 2
+##   Month     median_cases
+##   &lt;chr&gt;            &lt;dbl&gt;
+## 1 August         158283 
+## 2 July           152971 
+## 3 June           152320.
+## 4 September      167814</code></pre>
+<ol start="13" style="list-style-type: decimal">
+<li>Find your own dataset, import it and implement the following
+functions on the data</li>
+</ol>
+<pre class="r"><code>df &lt;- read.csv(&#39;https://bryantstats.github.io/math421/data/titanic.csv&#39;)</code></pre>
+<ul>
+<li>head</li>
+</ul>
+<pre class="r"><code>head(df)</code></pre>
+<pre><code>##   PassengerId Survived Pclass
+## 1           1        0      3
+## 2           2        1      1
+## 3           3        1      3
+## 4           4        1      1
+## 5           5        0      3
+## 6           6        0      3
+##                                                  Name    Sex Age SibSp Parch
+## 1                             Braund, Mr. Owen Harris   male  22     1     0
+## 2 Cumings, Mrs. John Bradley (Florence Briggs Thayer) female  38     1     0
+## 3                              Heikkinen, Miss. Laina female  26     0     0
+## 4        Futrelle, Mrs. Jacques Heath (Lily May Peel) female  35     1     0
+## 5                            Allen, Mr. William Henry   male  35     0     0
+## 6                                    Moran, Mr. James   male  NA     0     0
+##             Ticket    Fare Cabin Embarked
+## 1        A/5 21171  7.2500              S
+## 2         PC 17599 71.2833   C85        C
+## 3 STON/O2. 3101282  7.9250              S
+## 4           113803 53.1000  C123        S
+## 5           373450  8.0500              S
+## 6           330877  8.4583              Q</code></pre>
+<ul>
+<li>str</li>
+</ul>
+<pre class="r"><code>str(df)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    891 obs. of  12 variables:
+##  $ PassengerId: int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Survived   : int  0 1 1 1 0 0 0 0 1 1 ...
+##  $ Pclass     : int  3 1 3 1 3 3 1 3 3 2 ...
+##  $ Name       : chr  &quot;Braund, Mr. Owen Harris&quot; &quot;Cumings, Mrs. John Bradley (Florence Briggs Thayer)&quot; &quot;Heikkinen, Miss. Laina&quot; &quot;Futrelle, Mrs. Jacques Heath (Lily May Peel)&quot; ...
+##  $ Sex        : chr  &quot;male&quot; &quot;female&quot; &quot;female&quot; &quot;female&quot; ...
+##  $ Age        : num  22 38 26 35 35 NA 54 2 27 14 ...
+##  $ SibSp      : int  1 1 0 1 0 0 0 3 0 1 ...
+##  $ Parch      : int  0 0 0 0 0 0 0 1 2 0 ...
+##  $ Ticket     : chr  &quot;A/5 21171&quot; &quot;PC 17599&quot; &quot;STON/O2. 3101282&quot; &quot;113803&quot; ...
+##  $ Fare       : num  7.25 71.28 7.92 53.1 8.05 ...
+##  $ Cabin      : chr  &quot;&quot; &quot;C85&quot; &quot;&quot; &quot;C123&quot; ...
+##  $ Embarked   : chr  &quot;S&quot; &quot;C&quot; &quot;S&quot; &quot;S&quot; ...</code></pre>
+<ul>
+<li>names</li>
+</ul>
+<pre class="r"><code>names(df)</code></pre>
+<pre><code>##  [1] &quot;PassengerId&quot; &quot;Survived&quot;    &quot;Pclass&quot;      &quot;Name&quot;        &quot;Sex&quot;        
+##  [6] &quot;Age&quot;         &quot;SibSp&quot;       &quot;Parch&quot;       &quot;Ticket&quot;      &quot;Fare&quot;       
+## [11] &quot;Cabin&quot;       &quot;Embarked&quot;</code></pre>
+<ul>
+<li>mean, min, max</li>
+</ul>
+<pre class="r"><code>mean(df$Fare)</code></pre>
+<pre><code>## [1] 32.20421</code></pre>
+<pre class="r"><code>min(df$Fare)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>max(df$Fare)</code></pre>
+<pre><code>## [1] 512.3292</code></pre>
+<ul>
+<li>table</li>
+</ul>
+<pre class="r"><code>table(df$Pclass)</code></pre>
+<pre><code>## 
+##   1   2   3 
+## 216 184 491</code></pre>
+<ul>
+<li>is.na</li>
+</ul>
+<pre class="r"><code>sum(is.na(df))</code></pre>
+<pre><code>## [1] 177</code></pre>
+<ul>
+<li>colSums</li>
+</ul>
+<pre class="r"><code>colSums(is.na(df))</code></pre>
+<pre><code>## PassengerId    Survived      Pclass        Name         Sex         Age 
+##           0           0           0           0           0         177 
+##       SibSp       Parch      Ticket        Fare       Cabin    Embarked 
+##           0           0           0           0           0           0</code></pre>
+<ul>
+<li>class</li>
+</ul>
+<pre class="r"><code>class(df$Pclass)</code></pre>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
+<ul>
+<li>cor</li>
+</ul>
+<pre class="r"><code>cor(df$Pclass, df$Survived)</code></pre>
+<pre><code>## [1] -0.338481</code></pre>
+<ul>
+<li>by</li>
+</ul>
+<pre class="r"><code>by(df$Fare, df$Sex, mean)</code></pre>
+<pre><code>## df$Sex: female
+## [1] 44.47982
+## ------------------------------------------------------------ 
+## df$Sex: male
+## [1] 25.52389</code></pre>
+<ul>
+<li>ifelse</li>
+</ul>
+<pre class="r"><code>df$Pclass2&lt;- ifelse(df$Pclass ==1, &#39;First_Class&#39;,ifelse  (df$Pclass ==2, &#39;Second_Class&#39;, &#39;Third_Class&#39;))</code></pre>
+<ul>
+<li>case_when</li>
+</ul>
+<pre class="r"><code>df$Pclass3 &lt;- case_when(df$Pclass2 == &#39;First_Class&#39; ~ &quot;First class&quot;, df$Pclass2 == &#39;Second_Class&#39; ~ &#39;Second Class&#39;, TRUE ~ &#39;Third Class&#39;)</code></pre>
+<ol start="17" style="list-style-type: decimal">
+<li>In the dataset in #16, practice the follows. You can reuse the code
+of 16.</li>
+</ol>
+<ul>
+<li>Create a categorical variable from a continuous variable</li>
+</ul>
+<p>based of Fare amount</p>
+<pre class="r"><code>summary(df$Fare)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    0.00    7.91   14.45   32.20   31.00  512.33</code></pre>
+<pre class="r"><code>df$Fare2 &lt;- case_when(df$Fare &lt; 8 ~ &#39;low_fare&#39;,
+                      df$Fare &lt; 31 ~ &#39;medium_fare&#39;,
+                      TRUE ~ &#39;high_fare&#39;)</code></pre>
+<ul>
+<li>From one categorical variable, create a new categorical variable
+with fewer categories</li>
+</ul>
+<pre class="r"><code>df$Simplified_Class &lt;- ifelse(df$Pclass == 1 | df$Pclass == 2, 
+                              &quot;Upper Class&quot;, 
+                              &quot;Lower Class&quot;)</code></pre>
 </div>
 
 
