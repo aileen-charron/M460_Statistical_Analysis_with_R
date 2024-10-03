@@ -11,7 +11,7 @@
 
 
 
-<title>README</title>
+<title>Assignment 4 - Data Wrangging with dplyr</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,16 +348,511 @@ display: none;
 
 
 
+<h1 class="title toc-ignore">Assignment 4 - Data Wrangging with
+<code>dplyr</code></h1>
 
 </div>
 
 
-<div id="m461-statistical-analysis-with-r" class="section level1">
-<h1>M461-Statistical-Analysis-with-R</h1>
-<p>Assignment1: <a href="file:///C:/Users/student/Documents/M461-Statistical-Analysis-with-R/Assignment1.html">Assignment1</a></p>
-<p>Assignment2: <a href="file:///C:/Users/student/Documents/M461-Statistical-Analysis-with-R/assignment2.html">Assignment2</a></p>
-<p>Assignment3: <a href="file:///C:/Users/student/Documents/M461-Statistical-Analysis-with-R/assignment3.html">Assignment3</a></p>
-<p>Assignment4: <a href="file:///C:/Users/student/Documents/M461-Statistical-Analysis-with-R/assignment4.html">Assignment4</a></p>
+<hr />
+<div id="install-tidyverse-package" class="section level4">
+<h4>1. Install <code>tidyverse</code> package</h4>
+<p>An R package can be installed by <code>install.packages</code>
+function. Install <code>tidyverse</code> if you have not done so.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Warning: package &#39;purrr&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Warning: package &#39;forcats&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Warning: package &#39;lubridate&#39; was built under R version 4.3.3</code></pre>
+<hr />
+</div>
+<div id="read-the-data-using-read_csv" class="section level4">
+<h4>2. Read the data using <code>read_csv</code></h4>
+<p>Use <code>read_csv</code> function to import the US Covid 19 data at
+<a href="https://covidtracking.com/data/download/all-states-history.csv">link</a>.
+Don’t forget to import <code>tidyverse</code> (library(tidyverse)) so
+that you can use read_csv.</p>
+<pre class="r"><code>df &lt;- read_csv(&#39;https://covidtracking.com/data/download/all-states-history.csv&#39;)</code></pre>
+<pre><code>## Warning: One or more parsing issues, call `problems()` on your data frame for details,
+## e.g.:
+##   dat &lt;- vroom(...)
+##   problems(dat)</code></pre>
+<hr />
+</div>
+<div id="fix-the-date-and-ceate-some-new-variables" class="section level4">
+<h4>3. Fix the date and ceate some new variables</h4>
+<p><code>lubridate</code> is a package of the <code>tidyverse</code>
+packages. We will make uses of <code>lubridate</code> in this
+question.</p>
+<ul>
+<li>Use the below codes to create <code>month</code>,
+<code>weekday</code> and <code>monthday</code> variables</li>
+</ul>
+<pre class="r"><code>library(lubridate)
+df$month = month(df$date)
+
+# day of the week
+df$weekday = wday(df$date)
+
+# day of the month
+df$monthday &lt;- mday(df$date)</code></pre>
+<hr />
+</div>
+<div id="create-new-variables-with-case_when." class="section level4">
+<h4>4. Create new variables with <code>case_when</code>.</h4>
+<p>The function <code>case_when</code> is a good option to create a new
+variable from existing variable. For example, this below codes create a
+new variable, <code>daily_death</code>, from <code>deathIncrease</code>
+variable. <code>deathIncrease</code> is the number of daily new death by
+Covid19. The new variable <code>daily_death</code> takes three values:
+low (if <code>deathIncrease</code> less than 3), medium
+(<code>deathIncrease</code> from 3 to 14), and high
+(<code>deathIncrease</code> more than 14). Please notice that this can
+also be done in a different way as shown in Assignment 3.</p>
+<pre class="r"><code>df$daily_death &lt;- case_when(
+  df$deathIncrease &lt;3 ~ &#39;low&#39;,
+  df$deathIncrease &lt;=14 ~ &#39;medium&#39;,
+  df$deathIncrease &gt; 14 ~ &#39;high&#39;,
+  TRUE ~ &#39;high&#39;
+)</code></pre>
+<ul>
+<li>Create variable <code>month2</code> that takes three values:
+early_month (day of the month from 1-10), mid_month (day of the month
+from 11-20), and end_month (day of the month &gt; 20).</li>
+</ul>
+<pre class="r"><code>df$month2 &lt;- case_when(
+  df$month &lt;=10 ~ &#39;early_month&#39;,
+  df$month &lt;=20 ~ &#39;mid_month&#39;,
+  df$month &gt;20 ~ &#39;end_month&#39;,
+  TRUE~&#39;end_month&#39;
+)</code></pre>
+<ul>
+<li>Create variable <code>weekend</code> that takes two values: 1 if
+it’s Saturday or Sunday or 0 otherwise.</li>
+</ul>
+<pre class="r"><code>df$weekend &lt;- case_when(
+  df$weekday == 6 ~ &#39;1&#39;,
+  df$weekday == 7 ~ &#39;1&#39;,
+  TRUE ~ &#39;0&#39;
+)</code></pre>
+<hr />
+</div>
+<div id="select-function" class="section level4">
+<h4>5. Select function</h4>
+<p>Use the select function to deselect the column
+<code>totalTestsViral</code> from the data.</p>
+<pre class="r"><code>df %&gt;%  select(-totalTestsViral)</code></pre>
+<pre><code>## # A tibble: 20,780 × 46
+##    date       state death deathConfirmed deathIncrease deathProbable
+##    &lt;date&gt;     &lt;chr&gt; &lt;dbl&gt;          &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+##  1 2021-03-07 AK      305             NA             0            NA
+##  2 2021-03-07 AL    10148           7963            -1          2185
+##  3 2021-03-07 AR     5319           4308            22          1011
+##  4 2021-03-07 AS        0             NA             0            NA
+##  5 2021-03-07 AZ    16328          14403             5          1925
+##  6 2021-03-07 CA    54124             NA           258            NA
+##  7 2021-03-07 CO     5989           5251             3           735
+##  8 2021-03-07 CT     7704           6327             0          1377
+##  9 2021-03-07 DC     1030             NA             0            NA
+## 10 2021-03-07 DE     1473           1337             9           136
+## # ℹ 20,770 more rows
+## # ℹ 40 more variables: hospitalized &lt;dbl&gt;, hospitalizedCumulative &lt;dbl&gt;,
+## #   hospitalizedCurrently &lt;dbl&gt;, hospitalizedIncrease &lt;dbl&gt;,
+## #   inIcuCumulative &lt;dbl&gt;, inIcuCurrently &lt;dbl&gt;, negative &lt;dbl&gt;,
+## #   negativeIncrease &lt;dbl&gt;, negativeTestsAntibody &lt;dbl&gt;,
+## #   negativeTestsPeopleAntibody &lt;lgl&gt;, negativeTestsViral &lt;dbl&gt;,
+## #   onVentilatorCumulative &lt;dbl&gt;, onVentilatorCurrently &lt;dbl&gt;, …</code></pre>
+<hr />
+</div>
+<div id="pipe-operator" class="section level4">
+<h4>6. Pipe Operator ( %&gt;% )</h4>
+<p>Pipe operator offers another way to write R codes. Many times, it
+makes the codes more readable. Pipe works very well with all the
+<code>tidyverse</code> packages. Refer to <a href="../slides/4_dplyr.html#15">these slides</a> (slide 15, 16, 17 and
+18) to rewrite the below codes using pipe operator</p>
+<pre class="r"><code>x &lt;- c(1:10)
+
+# square root of x
+sqrt(x)</code></pre>
+<pre><code>##  [1] 1.000000 1.414214 1.732051 2.000000 2.236068 2.449490 2.645751 2.828427
+##  [9] 3.000000 3.162278</code></pre>
+<pre class="r"><code>sum(sqrt(x))</code></pre>
+<pre><code>## [1] 22.46828</code></pre>
+<pre class="r"><code>log(sum(sqrt(x)))</code></pre>
+<pre><code>## [1] 3.112104</code></pre>
+<pre class="r"><code># log base 2 of 16
+log(16, 2)</code></pre>
+<pre><code>## [1] 4</code></pre>
+<pre class="r"><code>x &lt;- c(1:10)
+
+x %&gt;% sqrt %&gt;% sum %&gt;% log</code></pre>
+<pre><code>## [1] 3.112104</code></pre>
+<hr />
+</div>
+<div id="combo-1-group_by-summarise" class="section level4">
+<h4>7. Combo 1: group_by + summarise</h4>
+<p>This combo is used when you want to apply a function/calculation to
+different groups of the data. For example, to calculate the average
+number of cases (<code>positiveIncrease</code>) by
+<code>dataQualityGrade</code>, we use:</p>
+<ul>
+<li>calculate the average number of cases by dataqualitygrade</li>
+</ul>
+<pre class="r"><code>df %&gt;% 
+  group_by(weekday) %&gt;% 
+  summarise(mean(positiveIncrease))</code></pre>
+<pre><code>## # A tibble: 7 × 2
+##   weekday `mean(positiveIncrease)`
+##     &lt;dbl&gt;                    &lt;dbl&gt;
+## 1       1                    1261.
+## 2       2                    1174.
+## 3       3                    1314.
+## 4       4                    1439.
+## 5       5                    1478.
+## 6       6                    1540.
+## 7       7                    1478.</code></pre>
+<ul>
+<li>Calculate the median number of cases (<code>positiveIncrease</code>)
+by <code>month</code></li>
+</ul>
+<pre class="r"><code>df %&gt;% 
+  group_by(month) %&gt;% 
+  summarise(median(positiveIncrease))</code></pre>
+<pre><code>## # A tibble: 12 × 2
+##    month `median(positiveIncrease)`
+##    &lt;dbl&gt;                      &lt;dbl&gt;
+##  1     1                      1517 
+##  2     2                       520 
+##  3     3                        19 
+##  4     4                       156 
+##  5     5                       206 
+##  6     6                       224.
+##  7     7                       444 
+##  8     8                       415 
+##  9     9                       456.
+## 10    10                       771 
+## 11    11                      1596.
+## 12    12                      2080.</code></pre>
+<ul>
+<li>Calculate the average number of cases
+(<code>positiveIncrease</code>) by <code>month2</code></li>
+</ul>
+<pre class="r"><code>df %&gt;% group_by(month2) %&gt;% 
+  summarise(mean(positiveIncrease))</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   month2      `mean(positiveIncrease)`
+##   &lt;chr&gt;                          &lt;dbl&gt;
+## 1 early_month                    1034.
+## 2 mid_month                      3161.</code></pre>
+<ul>
+<li>Calculate the median number of cases (<code>positiveIncrease</code>)
+by <code>weekend</code></li>
+</ul>
+<pre class="r"><code>df %&gt;% group_by(weekend) %&gt;% 
+  summarise(median(positiveIncrease))</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   weekend `median(positiveIncrease)`
+##   &lt;chr&gt;                        &lt;dbl&gt;
+## 1 0                              418
+## 2 1                              482</code></pre>
+<hr />
+</div>
+<div id="combo-2-filter-group_by-summarise" class="section level4">
+<h4>8. Combo 2: filter + group_by + summarise</h4>
+<p>An example: to calculate the average number of cases
+(<code>positiveIncrease</code>) in January and February separately, we
+use:</p>
+<pre class="r"><code>df %&gt;% 
+  filter(month==1|month==2) %&gt;% 
+  group_by(month) %&gt;% 
+  summarise(positve_increase = mean(positiveIncrease))</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   month positve_increase
+##   &lt;dbl&gt;            &lt;dbl&gt;
+## 1     1            3448.
+## 2     2            1378.</code></pre>
+<ul>
+<li>Calculate the median number of cases (<code>positiveIncrease</code>)
+on the weekend by <code>month</code> in October and November 2020.</li>
+</ul>
+<pre class="r"><code>df$year &lt;- year(df$date)
+
+df %&gt;% 
+  filter(year == 2020) %&gt;% 
+  filter(month == 10 | month ==11) %&gt;%
+  group_by(weekend) %&gt;% 
+  summarise(positive_increase = median(positiveIncrease))</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   weekend positive_increase
+##   &lt;chr&gt;               &lt;dbl&gt;
+## 1 0                   1022 
+## 2 1                   1190.</code></pre>
+<ul>
+<li>Calculate the average number of death at different periods of a
+month (<code>month2</code> variable) in Fall 2020</li>
+</ul>
+<pre class="r"><code>df %&gt;% 
+  filter(year == 2020) %&gt;% 
+  filter(month == 9| month == 10| month ==11) %&gt;% 
+  group_by(month2) %&gt;%
+    summarise(positive_increase = mean(positiveIncrease))</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   month2      positive_increase
+##   &lt;chr&gt;                   &lt;dbl&gt;
+## 1 early_month              903.
+## 2 mid_month               2664.</code></pre>
+<ul>
+<li>Compare the average number of hospitalizations between weekdays and
+weekends in Summer 2020</li>
+</ul>
+<pre class="r"><code>df %&gt;% 
+  filter(year == 2020) %&gt;%
+  filter(month == 6 | month ==7| month ==8) %&gt;% 
+  group_by(weekend) %&gt;%
+  summarise(hospitalizations = mean(hospitalizedIncrease))</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   weekend hospitalizations
+##   &lt;chr&gt;              &lt;dbl&gt;
+## 1 0                   27.7
+## 2 1                   36.6</code></pre>
+<ul>
+<li>Redo Questions 14 and 15 in <a href="assignment3.html">Assignment
+3</a> using the combos. Notice: you also need to use the data used in
+Assignment 3.</li>
+</ul>
+<p>Find the median cases by weekdays in Rhode Island in 2021.</p>
+<pre class="r"><code>df &lt;- read_csv(&#39;https://bryantstats.github.io/math421/data/us-states.csv&#39;)</code></pre>
+<pre class="r"><code>df$month = month(df$date)
+
+# day of the week
+df$weekday = wday(df$date)
+
+# day of the month
+df$monthday &lt;- mday(df$date)
+
+df$year &lt;- year(df$date)</code></pre>
+<pre class="r"><code>df %&gt;%
+  filter(year == 2021) %&gt;% 
+  filter( state == &#39;Rhode Island&#39;) %&gt;% 
+  group_by(weekday) %&gt;% 
+  summarise(cases = median(cases))</code></pre>
+<pre><code>## # A tibble: 7 × 2
+##   weekday   cases
+##     &lt;dbl&gt;   &lt;dbl&gt;
+## 1       1 152578.
+## 2       2 152605 
+## 3       3 152644.
+## 4       4 152676.
+## 5       5 152683 
+## 6       6 152643 
+## 7       7 152578.</code></pre>
+<p>Compare the median cases in Rhode Island in June, July, August, and
+September in 2021.</p>
+<pre class="r"><code>df %&gt;% 
+  filter(year == 2021) %&gt;% 
+  filter(state == &#39;Rhode Island&#39;) %&gt;%
+  filter(month == 6 | month == 7| month == 8| month ==9) %&gt;%
+  group_by(month) %&gt;%
+  summarise(median_cases = median(cases))</code></pre>
+<pre><code>## # A tibble: 4 × 2
+##   month median_cases
+##   &lt;dbl&gt;        &lt;dbl&gt;
+## 1     6      152320.
+## 2     7      152971 
+## 3     8      158283 
+## 4     9      167814</code></pre>
+<hr />
+</div>
+<div id="combo-3-filter-group_by-summarise-arrange" class="section level4">
+<h4>9. Combo 3: filter + group_by + summarise + arrange</h4>
+<p>Use the arrange function to find a month that has the highest number
+of deaths on the weekend.</p>
+<pre class="r"><code>df %&gt;%
+  filter(weekday == 6|weekday ==7) %&gt;% 
+  group_by(month) %&gt;% 
+  summarise(death_count = sum(deaths)) %&gt;%
+  arrange(-death_count)</code></pre>
+<pre><code>## # A tibble: 12 × 2
+##    month death_count
+##    &lt;dbl&gt;       &lt;dbl&gt;
+##  1     7    17543082
+##  2     4    15186377
+##  3     8    14813382
+##  4     5    14133518
+##  5     6    13809511
+##  6     3    12032186
+##  7     1    11626325
+##  8     2    11296607
+##  9     9    11082369
+## 10    12     9676925
+## 11    10     9431764
+## 12    11     8135095</code></pre>
+<hr />
+</div>
+<div id="use-your-own-dataset-and-implement-the-follows-functions-or-combos.-you-can-use-the-adult-census-income-or-titanic-data." class="section level4">
+<h4>10. Use your own dataset and implement the follows functions or
+combos. You can use the <a href="../data/adult_census.csv">Adult Census
+Income</a> or <a href="../data/titanic.csv">Titanic data</a>.</h4>
+<pre class="r"><code>df &lt;- read_csv(&#39;https://bryantstats.github.io/math421/data/titanic.csv&#39;)</code></pre>
+<ul>
+<li>select</li>
+</ul>
+<pre class="r"><code>#remove cabin
+
+df %&gt;%  select(-Cabin)</code></pre>
+<pre><code>## # A tibble: 891 × 11
+##    PassengerId Survived Pclass Name         Sex     Age SibSp Parch Ticket  Fare
+##          &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
+##  1           1        0      3 Braund, Mr.… male     22     1     0 A/5 2…  7.25
+##  2           2        1      1 Cumings, Mr… fema…    38     1     0 PC 17… 71.3 
+##  3           3        1      3 Heikkinen, … fema…    26     0     0 STON/…  7.92
+##  4           4        1      1 Futrelle, M… fema…    35     1     0 113803 53.1 
+##  5           5        0      3 Allen, Mr. … male     35     0     0 373450  8.05
+##  6           6        0      3 Moran, Mr. … male     NA     0     0 330877  8.46
+##  7           7        0      1 McCarthy, M… male     54     0     0 17463  51.9 
+##  8           8        0      3 Palsson, Ma… male      2     3     1 349909 21.1 
+##  9           9        1      3 Johnson, Mr… fema…    27     0     2 347742 11.1 
+## 10          10        1      2 Nasser, Mrs… fema…    14     1     0 237736 30.1 
+## # ℹ 881 more rows
+## # ℹ 1 more variable: Embarked &lt;chr&gt;</code></pre>
+<ul>
+<li>filter</li>
+</ul>
+<pre class="r"><code>#filter by females who survived
+df %&gt;%  filter(Sex == &#39;female&#39;, Survived == 1)</code></pre>
+<pre><code>## # A tibble: 233 × 12
+##    PassengerId Survived Pclass Name   Sex     Age SibSp Parch Ticket  Fare Cabin
+##          &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;
+##  1           2        1      1 &quot;Cumi… fema…    38     1     0 PC 17… 71.3  C85  
+##  2           3        1      3 &quot;Heik… fema…    26     0     0 STON/…  7.92 &lt;NA&gt; 
+##  3           4        1      1 &quot;Futr… fema…    35     1     0 113803 53.1  C123 
+##  4           9        1      3 &quot;John… fema…    27     0     2 347742 11.1  &lt;NA&gt; 
+##  5          10        1      2 &quot;Nass… fema…    14     1     0 237736 30.1  &lt;NA&gt; 
+##  6          11        1      3 &quot;Sand… fema…     4     1     1 PP 95… 16.7  G6   
+##  7          12        1      1 &quot;Bonn… fema…    58     0     0 113783 26.6  C103 
+##  8          16        1      2 &quot;Hewl… fema…    55     0     0 248706 16    &lt;NA&gt; 
+##  9          20        1      3 &quot;Mass… fema…    NA     0     0 2649    7.22 &lt;NA&gt; 
+## 10          23        1      3 &quot;McGo… fema…    15     0     0 330923  8.03 &lt;NA&gt; 
+## # ℹ 223 more rows
+## # ℹ 1 more variable: Embarked &lt;chr&gt;</code></pre>
+<ul>
+<li>mutate</li>
+</ul>
+<pre class="r"><code>#crate a column that has a 1 if first class and a 0 if not
+df &lt;- df %&gt;% mutate(first_class = ifelse(Pclass == 1, 1, 0) )</code></pre>
+<ul>
+<li>summarise</li>
+</ul>
+<pre class="r"><code>#summarise median fare
+df %&gt;%  summarise (median_fare = median(Fare, na.rm = TRUE))</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   median_fare
+##         &lt;dbl&gt;
+## 1        14.5</code></pre>
+<ul>
+<li>arrange</li>
+</ul>
+<pre class="r"><code>#arrange by class
+df %&gt;% arrange(Pclass)</code></pre>
+<pre><code>## # A tibble: 891 × 13
+##    PassengerId Survived Pclass Name   Sex     Age SibSp Parch Ticket  Fare Cabin
+##          &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;
+##  1           2        1      1 Cumin… fema…    38     1     0 PC 17…  71.3 C85  
+##  2           4        1      1 Futre… fema…    35     1     0 113803  53.1 C123 
+##  3           7        0      1 McCar… male     54     0     0 17463   51.9 E46  
+##  4          12        1      1 Bonne… fema…    58     0     0 113783  26.6 C103 
+##  5          24        1      1 Slope… male     28     0     0 113788  35.5 A6   
+##  6          28        0      1 Fortu… male     19     3     2 19950  263   C23 …
+##  7          31        0      1 Uruch… male     40     0     0 PC 17…  27.7 &lt;NA&gt; 
+##  8          32        1      1 Spenc… fema…    NA     1     0 PC 17… 147.  B78  
+##  9          35        0      1 Meyer… male     28     1     0 PC 17…  82.2 &lt;NA&gt; 
+## 10          36        0      1 Holve… male     42     1     0 113789  52   &lt;NA&gt; 
+## # ℹ 881 more rows
+## # ℹ 2 more variables: Embarked &lt;chr&gt;, first_class &lt;dbl&gt;</code></pre>
+<ul>
+<li>count</li>
+</ul>
+<pre class="r"><code>#count by class
+df %&gt;% count(Pclass)</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   Pclass     n
+##    &lt;dbl&gt; &lt;int&gt;
+## 1      1   216
+## 2      2   184
+## 3      3   491</code></pre>
+<ul>
+<li>count + arrange</li>
+</ul>
+<pre class="r"><code>#determine what class appears most
+df %&gt;% 
+  count(Pclass) %&gt;% 
+  arrange(-n)</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   Pclass     n
+##    &lt;dbl&gt; &lt;int&gt;
+## 1      3   491
+## 2      1   216
+## 3      2   184</code></pre>
+<ul>
+<li>filter + count + arrange</li>
+</ul>
+<pre class="r"><code>#determine what class appears most for females
+df %&gt;% 
+  filter(Sex == &#39;female&#39;) %&gt;% 
+  count(Pclass) %&gt;% 
+  arrange(-n) </code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   Pclass     n
+##    &lt;dbl&gt; &lt;int&gt;
+## 1      3   144
+## 2      1    94
+## 3      2    76</code></pre>
+<ul>
+<li>group_by + summarise</li>
+</ul>
+<pre class="r"><code>#mean fare by class
+df %&gt;% 
+  group_by(Pclass) %&gt;% 
+  summarise(mean_fare = mean(Fare))</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   Pclass mean_fare
+##    &lt;dbl&gt;     &lt;dbl&gt;
+## 1      1      84.2
+## 2      2      20.7
+## 3      3      13.7</code></pre>
+<ul>
+<li>filter + group_by + summarise</li>
+</ul>
+<pre class="r"><code>#mean age by class for women
+df %&gt;% 
+  filter(Sex == &#39;female&#39;) %&gt;% 
+  group_by(Pclass) %&gt;% 
+  summarise(mean_age = mean(Age, na.rm = TRUE))</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   Pclass mean_age
+##    &lt;dbl&gt;    &lt;dbl&gt;
+## 1      1     34.6
+## 2      2     28.7
+## 3      3     21.8</code></pre>
+<ul>
+<li>filter + group_by + summarise + arrange</li>
+</ul>
+<pre class="r"><code># median fare by class for men in descending order
+df %&gt;% 
+  filter(Sex == &#39;male&#39;) %&gt;% 
+  group_by(Pclass) %&gt;% 
+  summarise(median_fare = median(Fare, na.rm = TRUE)) %&gt;% 
+  arrange(-median_fare)</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   Pclass median_fare
+##    &lt;dbl&gt;       &lt;dbl&gt;
+## 1      1       41.3 
+## 2      2       13   
+## 3      3        7.92</code></pre>
 </div>
 
 

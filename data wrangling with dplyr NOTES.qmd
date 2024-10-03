@@ -30,6 +30,10 @@ editor: visual
 use *read_csv* instead of *read.csv* to read the data
 
 ```{r}
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(purrr)
 df <- read_csv('https://covidtracking.com/data/download/all-states-history.csv')
 
 ```
@@ -117,4 +121,60 @@ select with pipe
 df %>% select(state, date)
 ```
 
-deselect data from the data
+## five verbs of dplyr
+
+-   select() selects columns from data
+
+-   filter() filter rows of data
+
+-   summarise() summarises data
+
+-   arrange()
+
+-   mutate()
+
+```{r}
+df <- read_csv('https://bryantstats.github.io/math421/data/all-states-history.csv')
+```
+
+na.rm = TRUE does calculation with nas
+
+```{r}
+df %>% 
+  mutate(wd2 = weekdays(date)) %>% 
+  filter(state == "RI") %>% 
+  group_by(wd2) %>% 
+  summarise(median_death_RI = median(death, na.rm=TRUE))
+
+
+  
+```
+
+```{r}
+df %>% 
+  mutate(wd2 = weekdays(date)) %>% 
+  filter(state == "RI") %>% 
+  group_by(wd2) %>% 
+  summarise(median_death_RI = median(death, na.rm=TRUE)) %>% 
+  arrange(-median_death_RI)
+
+```
+
+```{r}
+df$wd = weekdays(df$date)
+
+#filter out RI
+
+df1 = df[df$state=="RI",]
+
+#calculate by groups
+
+by(data = df$death, INDICES = df$wd, median)
+```
+
+```{r}
+df2 = df1[df1$wd == "Sunday",]
+mean(df2$death)
+mean(df2$death, na.rm = TRUE)
+median(df2$death, na.rm = TRUE)
+```
