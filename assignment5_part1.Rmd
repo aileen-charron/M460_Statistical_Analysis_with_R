@@ -1,0 +1,200 @@
+---
+output: # rmarkdown::github_document
+  html_document:
+    theme: cerulean
+    toc: true
+  pdf_document: default
+  word_document: default
+title: "Assignment 5: Part 1"
+---
+
+------------------------------------------------------------------------
+
+**Questions**
+
+1.  **Use `read_csv` to import the data. Show the number of NAs for each columns.**
+
+```{r}
+library(tidyverse)
+df <- read_csv('https://bryantstats.github.io/math421/data/adult_census_missing.csv')
+```
+
+```{r}
+colSums(is.na(df))
+```
+
+2.  **Using function `aggr` the VIM package to plot the number of NAs for each column.**
+
+```{r}
+library(VIM)
+aggr(df)
+```
+
+2.  **Find other forms of missing values. Hint: You can use the `table` function to check if there are suspicious categories (Unknown, for example) in a variable. What all other forms of missing values shown in the data.**
+
+```{r}
+table(df$age, useNA = "ifany")
+```
+
+*age has "NA"*
+
+```{r}
+table(df$workclass, useNA = "ifany")
+```
+
+*workclass has "?", "Not Known", "Unknown", "NA"*
+
+```{r}
+table(df$fnlwgt)
+```
+
+```{r}
+table(df$education)
+```
+
+*education has "Not Known", "Unknown"*
+
+```{r}
+table(df$education.num)
+```
+
+```{r}
+table(df$marital.status)
+```
+
+*"Not Known"*
+
+```{r}
+table(df$occupation)
+```
+
+*"??, "Not Known", "Unknown"*
+
+```{r}
+table(df$relationship)
+```
+
+*"Not Known", "Unknown"*
+
+```{r}
+table(df$race)
+```
+
+```{r}
+table(df$sex)
+```
+
+*"Unknown"*
+
+```{r}
+table(df$capital.gain)
+```
+
+*"99999"*
+
+```{r}
+table(df$capital.loss)
+```
+
+```{r}
+table(df$hours.per.week)
+```
+
+```{r}
+table(df$native.country)
+```
+
+*"?", "Not Known", "Unknown"*
+
+```{r}
+table(df$income)
+```
+
+2.  **Replace all the forms of missing values found to NA**
+
+```{r}
+df <- replace (df, df == 'Not Known' |
+                 df == 'Unknown' |
+                 df == '?' |
+                 df == 99999, NA)
+```
+
+2.  **Replot the number of NAs for each column.**
+
+```{r}
+colSums(is.na(df))
+```
+
+```{r}
+library(VIM)
+aggr(df)
+```
+
+2.  **Approach 1 to handle NAs: remove all rows that have any NAs. Save the dataset after removing as a different data. The original data is unchanged (still have NAs). How many rows left after removing?**
+
+```{r}
+df1 <- drop_na(df)
+```
+
+32,561 rows changed to 29,717 rows
+
+2.  **Approach 2 to handle NAs: Fill all the NAs with the previous or next value. (Hint: Using `fill` function). Save the dataset after filling as a different data. The original data is unchanged (still have NAs).**
+
+```{r}
+df2 <- df
+```
+
+```{r}
+df2 %>%  fill(age, workclass,education, marital.status, occupation, relationship, sex, capital.gain, native.country, .direction = 'updown')
+```
+
+2.  **Approach 3 to handle NAs: For numeric variable, replace the NAs by the median. For categorical variables, replace the NAs to the majority.**
+
+```{r}
+df3 <- df
+```
+
+```{r}
+median_age <- median(df3$age, na.rm = TRUE)
+df3$age <- replace_na(df3$age, median_age)
+```
+
+```{r}
+majority_workclass <- names(which.max(table(df3$workclass)))
+df3$workclass <- replace_na(df3$workclass, majority_workclass)
+```
+
+```{r}
+majority_education <- names(which.max(table(df3$education)))
+df3$education <- replace_na(df3$education, majority_education)
+```
+
+```{r}
+majority_marital.status <- names(which.max(table(df3$marital.status)))
+df3$marital.status <- replace_na(df3$marital.status, majority_marital.status)
+```
+
+```{r}
+majority_occupation <- names(which.max(table(df3$occupation)))
+df3$occupation <- replace_na(df3$occupation, majority_occupation)
+```
+
+```{r}
+majority_relationship <- names(which.max(table(df3$relationship)))
+df3$relationship <- replace_na(df3$relationship, majority_relationship)
+```
+
+```{r}
+majority_sex <- names(which.max(table(df3$sex)))
+df3$sex <- replace_na(df3$sex, majority_sex)
+```
+
+```{r}
+median_capital.gain <- median(df3$capital.gain, na.rm = TRUE)
+df3$capital.gain <- replace_na(df3$capital.gain, median_capital.gain)
+```
+
+```{r}
+majority_native.country <- names(which.max(table(df3$native.country)))
+df3$native.country <- replace_na(df3$native.country, majority_native.country)
+```

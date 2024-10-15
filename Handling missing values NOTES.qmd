@@ -1,0 +1,166 @@
+---
+title: "Handling Missing Values NOTES"
+author: "Aileen Charron"
+format: html
+editor: visual
+---
+
+# Handle Missing Values
+
+## Do we need to handle missing values?
+
+-   **NO,** if just doing some calculations on data
+
+    -   try to use raw data as much as possible
+
+```{r}
+library(tidyverse)
+df <- read_csv('https://bryantstats.github.io/math421/data/titanic_missing.csv')
+df %>% summarise(mean_age=mean(Age, na.rm=TRUE))
+```
+
+-   **NO,** if just doing visualization
+
+```{r}
+df %>% ggplot(aes(x=Age, color=Sex))+
+    geom_density()
+```
+
+## When do we need to handle missing values?
+
+-   when you know the values of missing values
+
+-   when building predictive models
+
+-   other cases?
+
+    -   hypothesis testing
+
+## checking the NAs
+
+**missing values by columns**
+
+```{r}
+colSums(is.na(df))
+```
+
+determines if there is data there or not
+
+```{r}
+colMeans(is.na(df))
+```
+
+## Steps to handle missing values
+
+1.  **identify** all the **forms** of missing values ('unknown', 'missing', '9999'...)
+2.  convert them to **NA**
+3.  handle it (three approaches)
+    1.  **remove row**s that have any NAs
+    2.  **fill NAs** with the previous or next value of the column
+    3.  **replace** by the mean, majority, or a predicted value
+
+### Step 1: Identify forms of missing
+
+```{r}
+colSums(df=='Missing', na.rm = TRUE)
+```
+
+### Step 2: Convert all missing to NA
+
+convert unknown, missing, and not available to NA
+
+```{r}
+df2 <- replace(df, df == 'Unknown' |
+                  df == 'Missing' |
+                  df == 'Not Available', NA)
+```
+
+```{r}
+df3 <- replace(df, df %in% c("Unknown", "Missing", "Not Available"), NA)
+```
+
+```{r}
+colSums(df3 == "Missing", na.rm = TRUE)
+```
+
+### Approach 1: Remove Rows
+
+-   drop rows that have any NAs
+
+```{r}
+drop_na(df2)
+```
+
+-   drop the rows that have any NAs in Age or Sex
+
+```{r}
+drop_na(df2, Age, Sex)
+```
+
+-   drop columns with missing values
+
+```{r}
+df2 %>% select (-Age, -Sex)
+```
+
+### approach 2: fill in missing values with previous or next value
+
+```{r}
+df %>% fill(Age, Sex, Cabin, .direction = 'updown')
+```
+
+### Approach 3: replace missing values with replace_na
+
+-   replace by the mean (numeric value)
+
+```{r}
+mean_age <- mean(df$Age, na.rm = TRUE)
+df$Age <- replace_na(df$Age, mean_age)
+```
+
+-   replace by the majority (categorical variable)
+
+```{r}
+majority_sex <- names(which.max(table(df$Sex)))
+df$Sex <- replace_na(df$Sex, majority_sex)
+```
+
+```{r}
+majority_class <- names(which.max(table(df$Pclass)))
+df$Pclass <- replace_na(df$Pclass, majority_class)
+```
+
+## Package VIM
+
+```{r}
+library(VIM)
+df <- read_csv('https://bryantstats.github.io/math421/data/titanic_missing.csv')
+df <- replace(df, df == 'Unknown' |
+                  df == 'Missing' |
+                  df == 'Not Available', NA)
+```
+
+```{r}
+aggr(df)
+```
+
+## Package vis_dat
+
+```{r}
+library(visdat)
+df <- read_csv('https://bryantstats.github.io/math421/data/titanic_missing.csv')
+vis_miss(df)
+```
+
+```{r}
+vis_dat(df)
+```
+
+```{r}
+vis_expect(df, ~.x == 'Missing')
+```
+
+```{r}
+vis_expect(df, function(x){x == 'Missing'|x=='Unknown'|
+    x=='Not Available'|is.na(x)})
+```
