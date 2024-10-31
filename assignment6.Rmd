@@ -1,0 +1,125 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 6: Visualization - Aesthetic Mapping"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+-------
+
+### Questions on Your Selected Data
+
+Choose a dataset and produce the following types of plots and comment on each plot. Plots should be meaningful. If you use the data we used in class, make sure the plots are not the same as the ones in the slides. 
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+df <- read_csv("C:\\Users\\student\\Documents\\M461-Statistical-Analysis-with-R\\Salary_data.csv")
+```
+
+
+-------
+
+1. For one continuous variable:
+
+- Density
+
+```{r}
+df %>% ggplot() + geom_density(mapping = aes(x = education))
+```
+
+
+- Histogram 
+
+```{r}
+df %>% ggplot() + geom_histogram(mapping = aes (x = education))
+```
+
+
+- Boxplot
+
+```{r}
+df %>%  ggplot() + geom_boxplot(mapping = aes(y = education))
+```
+
+
+-------
+
+2. For one categorical variable
+
+- Barplot
+
+```{r}
+df %>% ggplot() + geom_bar(mapping = aes(x = corporate))
+```
+
+
+-------
+
+3. For two continuous variables
+
+- Scatter Plot
+
+```{r}
+df %>%  ggplot() + geom_point(mapping = aes(x = education, y = salary))
+```
+
+
+- Line Plot
+
+```{r}
+df %>%  ggplot() + geom_line(mapping = aes (x = education, y = salary))
+```
+
+
+- Smooth Plot
+
+```{r}
+df %>%  ggplot() + geom_smooth(mapping = aes(x = education, y = salary))
+```
+
+
+-------
+
+4. For one continuous + one categorical variables
+
+- Density
+
+```{r}
+df %>%  filter (salary> 50000) %>%  ggplot() + geom_density (mapping = aes (x = salary, color = gender))
+```
+
+
+- BoxPlot
+
+```{r}
+df %>%  filter (salary > 50000) %>%  ggplot() + geom_boxplot(mapping = aes (x = salary, y = gender))
+```
+
+
+-------
+
+5. For two categorical variables: barplot
+
+```{r}
+df %>%  ggplot() + geom_bar (mapping = aes (x = corporate, fill = gender), position = 'dodge')
+```
+
+
+
+-------
+
+6. A plot that contains three variables
+
+```{r}
+df %>% ggplot() + geom_boxplot(mapping = aes(x = salary, y = corporate, color = gender))
+```
+
+
+
