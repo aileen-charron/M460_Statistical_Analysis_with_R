@@ -1,0 +1,207 @@
+---
+title: "Assignment 7 - Visualization - Some aspects of ggplot2"
+format: html
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+------------------------------------------------------------------------
+
+Use the data of your own. Produce the following types of plots and comment on each plot. Plots should be meaningful. If you use the data we used in class, make sure the plots are not the same as the ones in the slides. All plots should have title, caption, appropriate labels on x and y-axis.
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(ggplot2)
+df <- read_csv("C:\\Users\\student\\Documents\\M461-Statistical-Analysis-with-R\\Salary_data.csv")
+```
+
+------------------------------------------------------------------------
+
+1.  Make a plot using `facet_wrap` by one categorical variable (`facet_wrap(~variable1)`)
+
+```{r}
+df %>%  ggplot() + geom_point(mapping = aes (x = education, y = salary)) + facet_wrap(~gender)
+```
+
+1.  Make a plot using `facet_wrap` by two categorical variables (`facet_wrap(~variable1+variable2)`)
+
+```{r}
+df %>%  ggplot() + geom_point(mapping = aes (x = education, y = salary)) + facet_wrap(~gender+corporate)
+```
+
+1.  Make a plot using `position ='dodge'`.
+
+```{r}
+df %>% ggplot() + geom_bar(mapping = aes(x = corporate, fill = gender), position = 'dodge')
+```
+
+1.  Make a plot using `position ='fill'`.
+
+```{r}
+df %>% ggplot() + geom_bar(mapping = aes(x = corporate, fill = gender), position = 'fill')
+```
+
+1.  Make a plot using `geom_col`.
+
+```{r}
+df %>% group_by(experience) %>% summarise(average_salary = mean(salary, na.rm = TRUE)) %>% ggplot + geom_col(mapping = aes(x = experience, y = average_salary))
+```
+
+1.  Change the theme of one of your plots.
+
+```{r}
+df %>% group_by(experience) %>% summarise(average_salary = mean(salary, na.rm = TRUE)) %>% ggplot + geom_col(mapping = aes(x = experience, y = average_salary)) + theme_dark()
+```
+
+1.  Make a plot using combo filter + ggplot
+
+```{r}
+df %>%  filter (experience <=10) %>% ggplot() + geom_bar(mapping = aes(x = corporate, fill = gender), position = 'dodge')
+```
+
+1.  Make a plot using combo group_by + summarise + geom_col
+
+```{r}
+df %>%
+  group_by(gender, experience) %>% 
+  summarise(mean_loyalty = mean(loyalty, na.rm = TRUE)) %>% 
+  ggplot() + 
+  geom_col(aes(x = experience, y = mean_loyalty, fill = gender), position = 'dodge')
+```
+
+1.  Save a plot and put a link of the plot to your Github Webpage. To link a plot `abc.png` you just need to insert the following on the README.md
+
+```{r}
+gg <- df %>%  ggplot() + geom_point(mapping = aes (x = education, y = salary)) + facet_wrap(~gender+corporate)
+ggsave(filename = 'facets.png', plot = gg)
+```
+
+```{r, eval=FALSE}
+[Link to the plot](abc.png)
+```
+
+10. In this question, we will use the Covid19 vaccination data for the US. The data and data dictionary can be found at the below link:
+
+-   [Data](https://bryantstats.github.io/math421/data/vaccinations-by-manufacturer.csv)
+
+```{r}
+library(tidyverse)
+df <- read_csv('https://bryantstats.github.io/math421/data/vaccinations-by-manufacturer.csv')
+```
+
+`Geom_point` makes scatter plots, which plot two numeric (or Date) variables. A third categorical variable is often brought in for color. For example, we can compare different vaccine types used in the US by
+
+```{r}
+df %>% 
+  filter(location=='United States') %>% 
+  ggplot()+
+  geom_point(mapping = aes(x = date, 
+                                    y = total_vaccinations, 
+                                    color = vaccine))
+```
+
+Do the follows.
+
+-   Use `geom_point` to compare the vaccines used by date in Argentina in 2022.
+
+```{r}
+d1 <- df %>% 
+  filter(location %in% c('Argentina')) %>% 
+  filter(year(date) == 2022) %>% 
+  group_by(date, location) %>% 
+  summarise(total_vac2=sum(total_vaccinations, na.rm=TRUE))
+
+# Plot
+d1 %>% 
+  ggplot()+
+  geom_point(mapping=aes(x=date, 
+                         y=total_vac2, 
+                         color=location))
+
+
+```
+
+-   Change `geom_point` to `geom_line` in the above codes to have the corresponding line plots.
+
+```{r}
+d1 <- df %>% 
+  filter(location %in% c('Argentina')) %>% 
+  filter(year(date) == 2022) %>% 
+  group_by(date, location) %>% 
+  summarise(total_vac2=sum(total_vaccinations, na.rm=TRUE))
+
+# Plot
+d1 %>% 
+  ggplot()+
+  geom_line(mapping=aes(x=date, 
+                         y=total_vac2, 
+                         color=location))
+
+```
+
+11. (Using the same dataset as in 10.) Sometime we need to do some calculations on the data before plotting. For example, the below codes is to compare the total vaccines (including all types of vaccines) by date between the US and the EU
+
+```{r}
+# the total vaccines (including all types of vaccines) by date
+d1 <- df %>% 
+  filter(location %in% c('United States', 'European Union')) %>% 
+  group_by(date, location) %>% 
+  summarise(total_vac2=sum(total_vaccinations, na.rm=TRUE))
+
+# Plot
+d1 %>% 
+  ggplot()+
+  geom_point(mapping=aes(x=date, 
+                         y=total_vac2, 
+                         color=location))
+```
+
+Notice that the above codes could be piped in one
+
+```{r, eval=FALSE}
+df %>% 
+  filter(location %in% c('United States', 'European Union')) %>% 
+  group_by(date, location) %>% 
+  summarise(total_vac2=sum(total_vaccinations, na.rm=TRUE)) %>% 
+  ggplot()+
+  geom_point(mapping=aes(x=date, 
+                         y=total_vac2, 
+                         color=location))
+```
+
+Do the follows.
+
+-   Use `geom_point` compare the total vaccines (including all types of vaccines) by date between countries/regions in Asia
+
+```{r}
+library(countrycode)
+
+df %>% 
+  filter(countrycode(location, 
+                     "country.name", 
+                     "continent") == "Asia") %>% 
+  group_by(date, location) %>% 
+  summarise(total_vac2=sum(total_vaccinations, na.rm=TRUE)) %>% 
+  ggplot()+
+  geom_point(mapping=aes(x=date, 
+                         y=total_vac2, 
+                         color=location))
+```
+
+-   Use `geom_point` compare the total vaccines (including all types of vaccines) by date between countries/regions in South America in 2021
+
+```{r}
+df %>% 
+  filter(location %in% c('Argentina', 'Uruguay', 'Ecuador', 'Chile', 'Peru')) %>% 
+  filter(year(date) == 2021) %>% 
+  group_by(date, location) %>% 
+  summarise(total_vac2=sum(total_vaccinations, na.rm=TRUE)) %>% 
+  ggplot()+
+  geom_point(mapping=aes(x=date, 
+                         y=total_vac2, 
+                         color=location))
+```

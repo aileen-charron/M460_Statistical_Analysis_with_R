@@ -13,3 +13,7 @@
 [Assignment 5 Part 2](assignment5_part2.html)
 
 [Assignment 6](assignment6.html)
+
+[Assignment 7](assignment7.html)
+
+[Link to plot](facets.png)
