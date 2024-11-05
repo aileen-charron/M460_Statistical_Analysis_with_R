@@ -1,0 +1,59 @@
+---
+title: "Modeling Notes"
+format: html
+editor: visual
+---
+
+# predictive modeling
+
+## Dataset
+
+-   passengers in titanic
+
+-   target = 1, survived
+
+-   target = 0, not survived
+
+## import & clean data
+
+```{r}
+library(tidyverse)
+df = read_csv("https://bryantstats.github.io/math421/data/titanic.csv")
+```
+
+## set the target variable
+
+```{r}
+# Take out some columns
+df <- df %>% select(-PassengerId, -Ticket, -Name, -Cabin)
+# Set the target variable
+df <- df %>% rename(target=Survived)
+```
+
+## correct variables' types
+
+```{r}
+# Correct variables' types
+df <- df %>% 
+  mutate(target = as.factor(target),
+         Pclass = as.factor(Pclass),
+         Embarked = as.factor(Embarked),
+         Sex = as.factor(Sex)
+         )
+```
+
+## handle missing values
+
+```{r}
+# Replace NA of Age by its mean
+mean_age <- mean(df$Age, na.rm=TRUE)
+df$Age <- replace_na(df$Age, mean_age)
+# Drop all rows that has an NA
+df = drop_na(df)
+```
+
+## split data into training & testing
+
+```{r}
+
+```

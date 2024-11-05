@@ -1,0 +1,68 @@
+---
+title: "Modeling: universal framework"
+format: html
+editor: visual
+---
+
+# modeling: universal framework
+
+## unified interface
+
+-   a package to unify all model interfaces needed
+
+-   called wrapper
+
+-   several wrappers for machine learning in R:
+
+    -   caret
+
+    -   mlr3
+
+    -   tidymodels
+
+## data prep
+
+```{r}
+library(tidyverse)
+library(caret)
+library(tidyverse)
+df = read_csv("https://bryantstats.github.io/math421/data/titanic.csv")
+# Remove some columns
+df <- df %>% select(-PassengerId, -Ticket, -Name, -Cabin)
+# Set the target variable
+df <- df %>% rename(target=Survived)
+# Correct variables' types
+df <- df %>% 
+  mutate(target = as.factor(target),
+         Pclass = as.factor(Pclass),
+         )
+# Handle missing values
+df$Age[is.na(df$Age)] = mean(df$Age, na.rm = TRUE)
+df = drop_na(df)
+splitIndex <- createDataPartition(df$target, p = .70, 
+                                  list = FALSE)
+df_train <- df[ splitIndex,]
+df_test <- df[-splitIndex,]
+```
+
+## create a decision tree with caret
+
+```{r}
+model1 <- train(target~., data=df_train, 
+                method = "rpart2",
+                maxdepth=3)
+pred <- predict(model1, df_test)
+cm <- confusionMatrix(data = pred, reference = df_test$target, positive = "1")
+cm$overall[1]
+```
+
+## create a random forest with caret
+
+```{r}
+model2 <- train(target~., data=df_train, 
+                method = "rf",
+                ntree = 1000) 
+pred <- predict(model2, df_test)
+cm <- confusionMatrix(data = pred, reference = df_test$target, positive = "1")
+cm$overall[1]
+```
