@@ -20,4 +20,4 @@
 
 [A8: Animated Graphics: Bar Races](assignment8.html)
 
-[A9: Time Revealing]()
+[A9: Time Revealing](assignment9.html)

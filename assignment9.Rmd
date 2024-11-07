@@ -1,0 +1,133 @@
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 9: Visualization - Revealing a graph"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+------------------------------------------------------------------------
+
+**Notice:** *In this assignment, all the plot should have title, caption, and axis labels.*
+
+1.  Use the dataset by of covid 19 by WHO at <https://covid19.who.int/WHO-COVID-19-global-data.csv>. Find the three countries with the most numbers of deaths by Covid-19.
+
+```{r}
+library(gganimate)
+library(ggplot2)
+library(tidyverse)
+library(lubridate)
+
+df <- read_csv("C:\\Users\\student\\Documents\\M461-Statistical-Analysis-with-R\\WHO-COVID-19-global-data.csv")
+```
+
+Hint:
+
+-   Use `filter` to select the most current date
+
+-   Pipe with `arrange(-Cumulative_deaths)` to rank the data by the number of cumulative deaths
+
+```{r}
+df$Date_reported <- as.Date(df$Date_reported, format = "%m/%d/%Y")
+```
+
+```{r}
+df %>% filter(Date_reported == max(Date_reported)) %>% 
+  arrange(-Cumulative_deaths)
+```
+
+**US, Brazil, & India have highest cumulative deaths**
+
+US, BR, IN
+
+2.  Use `transition_reveal` to make a plot revealing the number of deaths in the three countries with the most numbers of deaths
+
+```{r}
+df %>% filter(Country_code %in% c('US', 'BR', 'IN')) %>% 
+  ggplot(aes (y = Cumulative_deaths,
+              x = Date_reported,
+              color = Country_code)) +
+  geom_line() +
+  geom_point(size = 3) +
+  geom_text(aes(
+    label = Cumulative_deaths),
+    hjust = -.1, size = 5) +
+  transition_reveal(Date_reported) + 
+  labs(
+    title = "Cumulative COVID-19 Deaths",
+    x = "Date Reported",
+    y = "Cumulative Deaths",
+    caption = "United States saw highest cumulative COVID-19 Deaths"
+  )
+```
+
+2.  Create the new variable (column) `death_per_cases` recording the number of deaths per cases (Hint: divide cumulative deaths by cumulative cases). What are the three countries with the highest deaths per cases?
+
+```{r}
+df <- df %>%  
+  mutate(death_per_cases = Cumulative_deaths / Cumulative_cases)
+```
+
+```{r}
+df %>% filter(Date_reported == max(Date_reported)) %>% 
+  arrange(-death_per_cases)
+```
+
+**Yemen (YE), Sudan (SD), & Syrian Arab Republic (SY) had highest cumulative deaths per cases**
+
+2.  Use `transition_reveal` to make a plot revealing the number of deaths per cases of the US, Italy and Mexico.
+
+```{r}
+df %>% filter(Country_code %in% c('US', 'IT', 'MX')) %>% 
+  ggplot(aes (y = death_per_cases,
+              x = Date_reported,
+              color = Country_code)) +
+  geom_line() +
+  geom_point(size = 3) +
+  geom_text(aes(
+    label = death_per_cases),
+    hjust = -.1, size = 5) +
+  transition_reveal(Date_reported) + 
+  labs(
+    title = "Cumulative Deaths Per Case",
+    x = "Date Reported",
+    y = "Cumulative Deaths Per Case",
+    caption = "Mexico saw the highest Cumulative Deaths per Case during 2020"
+  )
+```
+
+2.  Import the following data <https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv>
+
+```{r}
+df <- read_csv('https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv')
+```
+
+Use `transition_reveal` to plot the total vaccinations per hundred by level of income. Hint: the levels of income are identified in the `location` variable. Put a short comment on the caption of the plot.
+
+```{r}
+df$date <- as.Date(df$date, format = "%Y-%m-%d")
+```
+
+```{r}
+df %>% 
+  filter(location %in% c('Low income', 'Lower middle income', 'Upper middle income', 'High income')) %>% 
+  ggplot(aes(
+    y = total_vaccinations_per_hundred,
+    x = date,
+    color = location)) +
+  geom_line() +
+  geom_point(size = 3) +
+  geom_text(aes(
+    label = total_vaccinations_per_hundred),
+    hjust = -.1, size = 5) +
+  transition_reveal(date) + 
+  labs(
+    title = "Total Vaccinations",
+    x = "Date",
+    y = "Total Vaccinations Per Hundred",
+    caption = "By 2024, vaccinations per hundred were proportional to income level")
+```
