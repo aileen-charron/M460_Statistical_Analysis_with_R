@@ -21,3 +21,9 @@
 [A8: Animated Graphics: Bar Races](assignment8.html)
 
 [A9: Time Revealing](assignment9.html)
+
+[A10: Modeling Basics](assignment10.html)
+
+[A11: Modeling: Universal Framework](assignment11.html)
+
+[A12: Modeling: Tuning](assignment12.html)
