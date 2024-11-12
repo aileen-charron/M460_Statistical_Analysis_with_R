@@ -1,0 +1,131 @@
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 11: Predictive Modeling - Universal Framework"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+------------------------------------------------------------------------
+
+# 1. Install the package mlbench and use the follows to import the data
+
+```{r}
+library(mlbench)
+library(tidyverse)
+library(caret)
+data(PimaIndiansDiabetes)
+df <- tibble(PimaIndiansDiabetes)
+```
+
+## 1.1 Train and Test a decision tree and a random forest with caret. Plot the variable importance of these models.
+
+### 1.1.1 Decision Tree with Caret
+
+```{r}
+df <- df %>% rename(target = diabetes)
+
+df <- df %>% 
+  mutate(target = as.factor(target))
+```
+
+```{r}
+splitIndex <- createDataPartition(df$target, p = 0.7,
+                                  list = FALSE)
+df_train <- df[splitIndex,]
+df_test <- df[-splitIndex,]
+```
+
+```{r}
+model1 <- train(target ~., data = df_train,
+                method = "rpart2",
+                maxdepth = 3)
+
+pred1 <- predict(model1, df_test)
+
+cm1 <- confusionMatrix(data = pred1, reference = df_test$target, positive = "pos")
+
+cm1$overall[1]
+```
+
+```{r}
+plot(varImp(model1))
+```
+
+### 1.1.2 Random Forest with Caret
+
+```{r}
+model2 <- train(target ~., data = df_train,
+                method = "rf",
+                ntree  = 1000)
+
+pred2 <- predict(model2, df_test)
+
+cm2 <- confusionMatrix(data = pred2, reference = df_test$target, positive = "pos")
+
+cm2$overall[1]
+```
+
+```{r}
+plot(varImp(model2))
+```
+
+# 2. Train and Test a `glmnet` model. Plot the variable importance of the model.
+
+```{r}
+model3 <- train(target ~., data = df_train,
+                method = "glmnet")
+
+pred3 <- predict(model3, df_test)
+
+cm3 <- confusionMatrix(data = pred3, reference = df_test$target, positive = "pos")
+
+cm3$overall[1]
+```
+
+**Accuracy = 76.96%**
+
+```{r}
+plot(varImp(model3))
+
+```
+
+# 3. Train and test two models that are not `ranger`, `glmnet` or `rpart` with caret. If possible, plot the variable importance of the model.
+
+## 3.1 Support Vector Machines (SVM)
+
+```{r}
+library(caret)
+library(e1071)
+
+model4 <- train(target ~., data = df_train,
+                method = "svmRadial")
+
+pred4 <- predict(model4, df_test)
+
+cm4 <- confusionMatrix(data = pred4, reference = df_test$target, positive = "pos")
+
+cm4$overall[1]
+```
+
+Cannot plot variable importance
+
+## 3.2 K-Nearest Neighbors(kNN)
+
+```{r}
+model5 <- train(target~., data = df_train,
+                method = "knn",
+                tuneGrid = data.frame(k = 1:10))
+
+pred5 <- predict(model5, df_test)
+
+cm5 <- confusionMatrix(data = pred5, reference = df_test$target, positive = "pos")
+
+cm5$overall[1]
+```
+
+cannot plot variable importance
