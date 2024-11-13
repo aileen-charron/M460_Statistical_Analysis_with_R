@@ -56,7 +56,7 @@ df = drop_na(df)
 #splitting 80% training, 20% testing
 library(caret)
 set.seed(2020)
-splitIndex <- createDataPartition(df$target, p = .70,
+splitIndex <- createDataPartition(df$target, p = .80,
                                    list = FALSE)
 df_train <- df[splitIndex,]
 df_test <- df[-splitIndex,]
@@ -92,10 +92,6 @@ fancyRpartPlot(tree_model)
 -   Plot the variable importance by the tree
 
 ```{r}
-tree_model$variable.importance
-```
-
-```{r}
 barplot(tree_model$variable.importance)
 ```
 
@@ -105,7 +101,7 @@ barplot(tree_model$variable.importance)
 
 ```{r}
 tree_model2 <- rpart(target ~ ., data = df_train,
-                    control = rpart.control(maxdepth = 8))
+                    control = rpart.control(minsplit = 5))
 
 pred2 <- predict(tree_model2, df_test, type = "class")
 
@@ -113,11 +109,33 @@ cm2 <- confusionMatrix(data = pred2, reference = df_test$target, positive = ">50
 cm2$overall[1]
 ```
 
-### Tree \# 3: 
+### Tree \# 3:
 
 ```{r}
+tree_model3 <- rpart(target ~., data = df_train,
+                     control = rpart.control(cp = 0.01))
 
+pred3 <- predict(tree_model3, df_test, type = "class")
+
+cm3 <- confusionMatrix(data = pred3, reference = df_test$target, positive = ">50K")
+
+cm3$overall[1]
 ```
+
+### Tree #4
+
+```{r}
+tree_model4 <- rpart(target ~., data = df_train,
+                     control = rpart.control(minibucket = 5))
+
+pred4 <- predict(tree_model4, df_test, type = "class")
+
+cm4 <- confusionMatrix(data = pred4, reference = df_test$target, positive = ">50K")
+
+cm4$overall[1]
+```
+
+**unsure why, but all three trees gave identical accuraces.**
 
 ## 4. Practice Random Forest. Do the follows:
 
@@ -141,13 +159,44 @@ cm$overall[1]
 -   Plot the variable importance by the forest
 
 ```{r}
-importance(forest_model)
-```
-
-```{r}
 varImpPlot(forest_model)
 ```
 
 ## 5. Create 3 more forests and compare the testing accuracy of these forests, which forest give the highest testing accuracy.
 
+### Forest #2
+
+```{r}
+forest_model2 = randomForest(target ~., data = df_train, ntree = 1000, mtry = 3)
+pred2<- predict(forest_model2, df_test, type = "class")
+
+cm2 <- confusionMatrix(data = pred2, reference = df_test$target, positive = ">50K")
+
+cm2$overall[1]
+```
+
+### Forest #3
+
+```{r}
+forest_model3 = randomForest(target ~., data = df_train, ntree = 1000, nodesize = 10)
+pred3<- predict(forest_model3, df_test, type = "class")
+
+cm3 <- confusionMatrix(data = pred3, reference = df_test$target, positive = ">50K")
+
+cm3$overall[1]
+```
+
+### Forest #4
+
+```{r}
+forest_model4 = randomForest(target ~., data = df_train, ntree = 1000, maxnodes = 30)
+pred4<- predict(forest_model4, df_test, type = "class")
+
+cm4 <- confusionMatrix(data = pred4, reference = df_test$target, positive = ">50K")
+
+cm4$overall[1]
+```
+
 ## 6. What is the best model (in term of testing accuracy) among all models (including trees and forests) you have trained?
+
+forest #3 was the best with accuracy of 86.54%. this forest had 1000 trees & nodes size 10
