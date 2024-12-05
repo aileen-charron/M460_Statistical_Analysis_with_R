@@ -27,3 +27,7 @@
 [A11: Modeling: Universal Framework](assignment11.html)
 
 [A12: Modeling: Tuning](assignment12.html)
+
+[Mid Term Codes]()
+
+[Mid Term Presentation](MidtermPres.qmd)
