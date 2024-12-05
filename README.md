@@ -30,4 +30,4 @@
 
 [Mid Term Codes](midterm.html)
 
-[Mid Term Presentatio](MidtermPresentation.html)
+[Mid Term Presentation](MidtermPresentation.html)

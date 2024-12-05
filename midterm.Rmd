@@ -464,6 +464,8 @@ ggsave(filename = 'graph6.png', plot = graph6)
 #7 
 
 #comparing average total charges of different ER modes by month
+df$er_mode <- as.factor(df$er_mode)
+
 
 graph7 <- df %>% 
   group_by(er_mode, moa_name) %>% 
@@ -490,6 +492,9 @@ ggsave(filename = 'graph7.png', plot = graph7)
 #8
 
 # comparing frequency of ER Modes by month
+df$er_mode <- as.factor(df$er_mode)
+
+
 graph8 <- df %>% 
   filter(er_mode %in% c(2,3)) %>% 
   group_by(provider_name, er_mode) %>% 
@@ -529,6 +534,8 @@ graph9 <-df %>% filter(pt_state %in% c("RI", "MA", "CT", "NH", "ME", "VT")) %>%
     axis.text.x = element_text(angle = 90, hjust = 1, size = 8)) +
       scale_y_continuous(labels = scales::comma)
 
+graph9
+
 ggsave(filename = 'graph9.png', plot = graph9)
 
 
@@ -537,7 +544,7 @@ ggsave(filename = 'graph9.png', plot = graph9)
 ```{r}
  #dist of patient birthweights
 graph10<-df %>%
-  filter(b_wt != "000") %>% 
+  filter(b_wt != "0") %>% 
   ggplot(aes(x = as.numeric(b_wt))) +  
   geom_histogram(binwidth = 10, fill = "pink", color = "black") + 
   labs(
