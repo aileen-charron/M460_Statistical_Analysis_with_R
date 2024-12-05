@@ -28,6 +28,6 @@
 
 [A12: Modeling: Tuning](assignment12.html)
 
-[Mid Term Codes]()
+[Mid Term Codes](midterm.html)
 
-[Mid Term Presentation](MidtermPres.qmd)
+[Mid Term Presentatio](MidtermPresentation.html)

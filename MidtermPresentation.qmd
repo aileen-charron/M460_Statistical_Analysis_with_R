@@ -1,0 +1,142 @@
+---
+title: "Midterm Presentation"
+format: revealjs
+editor: visual
+---
+
+# Midterm Presentation
+
+Aileen Charron
+
+# Visualizations
+
+## #1
+
+```{r}
+knitr::include_graphics("graph1.png")
+
+```
+
+## #2
+
+```{r}
+knitr::include_graphics("graph2.png")
+
+```
+
+## #3
+
+```{r}
+knitr::include_graphics("graph3.png")
+
+```
+
+## #4
+
+```{r}
+knitr::include_graphics("graph4.png")
+
+```
+
+## #5
+
+```{r}
+knitr::include_graphics("graph5.png")
+
+```
+
+## #6
+
+```{r}
+knitr::include_graphics("graph6.png")
+
+```
+
+## #7
+
+```{r}
+knitr::include_graphics("graph7.png")
+
+```
+
+## #8
+
+```{r}
+knitr::include_graphics("graph8.png")
+
+```
+
+## #9
+
+```{r}
+knitr::include_graphics("graph9.png")
+
+```
+
+## #10
+
+```{r}
+knitr::include_graphics("graph10.png")
+
+```
+
+## Animation Plot
+
+```{r}
+knitr::include_graphics("Animatedgif.gif")
+
+```
+
+# Model Comparisons
+
+# Model 1
+
+-   predicting high/low total charge
+
+    -   decision tree
+
+    -   random forest
+
+    -   ranger
+
+## Model Comparison
+
+```{r}
+knitr::include_graphics("results1.png")
+
+```
+
+## Chosen Model: Ranger
+
+-   accuracy on testing data: 82%
+
+# Model 2
+
+predicing high/low length of stay
+
+-   decision tree
+
+-   neural network
+
+-   ranger
+
+## Model Comparison
+
+```{r}
+knitr::include_graphics("results2.png")
+
+```
+
+## Chosen Model: Ranger
+
+-   accuracy on testing data: 81%
+
+# Challenges
+
+-   working with large dataset
+
+-   saving new variables for labeling coded variables
+
+-   working with visualizations
+
+-   debugging code
