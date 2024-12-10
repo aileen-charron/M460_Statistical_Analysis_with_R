@@ -1,0 +1,28 @@
+---
+title: "Final Project"
+author: "Aileen Charron"
+date: "2024-12-09"
+output: html_document
+---
+
+## Question 1:
+
+[dashboard link](final_Q1.html)
+
+## Question 2:
+
+## Question 3:
+
+## Question 4: selectlnput
+
+## Question 5: checkboxGroupInput
+
+## Question 6: sliderInput
+
+## Question 7: radioButtons
+
+## Question 8: dateRangeInput
+
+## Question 9: Combination of Inputs
+
+## Question 10:
