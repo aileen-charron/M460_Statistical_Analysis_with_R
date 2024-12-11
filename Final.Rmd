@@ -13,6 +13,8 @@ output: html_document
 
 ## Question 3:
 
+[dashboard link](https://aileencharron.shinyapps.io/final_Q3/)
+
 ## Question 4: selectlnput
 
 ## Question 5: checkboxGroupInput

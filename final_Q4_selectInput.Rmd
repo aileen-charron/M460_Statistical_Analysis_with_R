@@ -1,5 +1,5 @@
 ---
-title: "Titanic - SelectInput"
+title: "Restaurant - SelectInput"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -21,38 +21,46 @@ library(packrat)
 library(rsconnect)
 library(knitr)
 library(DT)
-df <- read_csv('https://bryantstats.github.io/math421/data/titanic.csv')
-df <- drop_na(df, Age) 
-df$Survived = factor(df$Survived)
+df <- read_csv("C:\\Users\\student\\Documents\\M461-Statistical-Analysis-with-R\\food_order.csv")
 
-titanic_sex <- unique(df$Sex)
+df <- df %>% 
+  filter(rating != "Not given")
+
+df$rating = factor(df$rating)
+
+food_weekday <- unique(df$day_of_the_week)
+
 ```
 
 #  {.sidebar}
 
-The sinking of the Titanic is one of the most infamous shipwrecks in history. While there was some element of luck involved in surviving, it seems some groups of people were more likely to survive than others. Select the input for the plots.
+NYC Restaurants Data - Food Ordering and Delivery. Looking to see how ratings (1-5) vary by other factors.
 
 ```{r}
-selectInput(inputId = "sex_input", 
-            label = h3("Select Gender"),
-            choices = titanic_sex, 
-            selected = 'male')
+selectInput(inputId = "weekday_input", 
+            label = h3("Select Weekday vs. Weekend"),
+            choices = food_weekday, 
+            selected = 'Weekend')
 ```
 
 # Main Tab 1
 
 ## Column {data-width="500"}
 
+
 ### Density Plot
 
 ```{r}
-renderPlotly({
+renderPlotly(
   p1 <- df %>% 
-    filter(Sex==input$sex_input) %>% 
-    ggplot(aes(x=Age, color=Survived))+
-    geom_density()
-  ggplotly(p1)
-})
+    filter(day_of_the_week == input$weekday_input) %>% 
+    ggplot(aes(x = rating)) +
+             geom_bar() +
+             labs(
+               title = "Frequency of Orders by Rating",
+               x = "Rating",
+               y = "Frequency"
+             ))
 ```
 
 ## Column {data-width="500"}
@@ -62,9 +70,9 @@ renderPlotly({
 ```{r}
 renderPlotly({
   p2 <- df %>% 
-    filter(Sex==input$sex_input) %>% 
-    ggplot(aes(x=Pclass, fill=Survived))+
-    geom_bar()
+    filter(day_of_the_week==input$weekday_input) %>% 
+    ggplot(aes(x = delivery_time, color = rating)) +
+    geom_density()
   ggplotly(p2)
 })
 ```
