@@ -1,5 +1,5 @@
 ---
-title: "Restaurant - SelectInput"
+title: "Restaurant - checkboxGroupInput"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -37,10 +37,11 @@ food_weekday <- unique(df$day_of_the_week)
 NYC Restaurants Data - Food Ordering and Delivery. Looking to see how ratings (1-5) vary by other factors.
 
 ```{r}
-selectInput(inputId = "weekday_input", 
-            label = h3("Select Weekday vs. Weekend"),
-            choices = food_weekday, 
-            selected = 'Weekend')
+checkboxGroupInput(inputId = "cuisine_type_input", 
+                   label = h3("Cuisine Type"),
+                   choices = unique(df$cuisine_type), 
+                   inline = TRUE,
+                   selected = 'S')
 ```
 
 # Main Tab 1
@@ -52,7 +53,7 @@ selectInput(inputId = "weekday_input",
 ```{r}
 renderPlotly(
   p1 <- df %>% 
-    filter(day_of_the_week == input$weekday_input) %>% 
+    filter(cuisine_type%in%input$cuisine_type_input) %>% 
     ggplot(aes(x = rating)) +
              geom_bar() +
              labs(
@@ -69,7 +70,7 @@ renderPlotly(
 ```{r}
 renderPlotly({
   p2 <- df %>% 
-    filter(day_of_the_week==input$weekday_input) %>% 
+    filter(cuisine_type%in%input$cuisine_type_input) %>% 
     ggplot(aes(x = delivery_time, color = rating)) +
     geom_density()
   ggplotly(p2)

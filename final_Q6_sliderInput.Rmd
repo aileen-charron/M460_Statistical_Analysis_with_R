@@ -1,5 +1,5 @@
 ---
-title: "Restaurant - SelectInput"
+title: "Restaurant - SliderInput"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -37,22 +37,23 @@ food_weekday <- unique(df$day_of_the_week)
 NYC Restaurants Data - Food Ordering and Delivery. Looking to see how ratings (1-5) vary by other factors.
 
 ```{r}
-selectInput(inputId = "weekday_input", 
-            label = h3("Select Weekday vs. Weekend"),
-            choices = food_weekday, 
-            selected = 'Weekend')
+sliderInput(inputId = "price_input",
+            label = h2("Select Cost of Order"),
+            min = min(df$cost_of_the_order, na.rm=TRUE),
+            max = max(df$cost_of_the_order, na.rm=TRUE),
+            value= c(10, 20))
 ```
 
 # Main Tab 1
 
 ## Column {data-width="500"}
 
-### Density Plot
+### Frequency Plot
 
 ```{r}
 renderPlotly(
   p1 <- df %>% 
-    filter(day_of_the_week == input$weekday_input) %>% 
+    filter(cost_of_the_order>input$price_input[1], cost_of_the_order<input$price_input[2]) %>% 
     ggplot(aes(x = rating)) +
              geom_bar() +
              labs(
@@ -64,12 +65,12 @@ renderPlotly(
 
 ## Column {data-width="500"}
 
-### Bar Plot
+### Density Plot
 
 ```{r}
 renderPlotly({
   p2 <- df %>% 
-    filter(day_of_the_week==input$weekday_input) %>% 
+filter(cost_of_the_order>input$price_input[1], cost_of_the_order<input$price_input[2]) %>%     
     ggplot(aes(x = delivery_time, color = rating)) +
     geom_density()
   ggplotly(p2)
