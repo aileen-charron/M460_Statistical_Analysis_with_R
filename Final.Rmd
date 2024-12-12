@@ -11,20 +11,36 @@ output: html_document
 
 ## Question 2:
 
+[dashbaord link](final_Q2.html)
+
 ## Question 3:
 
 [dashboard link](https://aileencharron.shinyapps.io/final_Q3/)
 
 ## Question 4: selectlnput
 
+[dashboard link](https://aileencharron.shinyapps.io/final_Q4_selectInput/)
+
 ## Question 5: checkboxGroupInput
+
+[dashboard link](https://aileencharron.shinyapps.io/final_Q5_checkboxGroupInput/)
 
 ## Question 6: sliderInput
 
+[dashboard link](https://aileencharron.shinyapps.io/final_Q6_sliderInput/)
+
 ## Question 7: radioButtons
+
+[dashboard link](https://aileencharron.shinyapps.io/final_Q7_radioButtons/)
 
 ## Question 8: dateRangeInput
 
+[dashboard link]()
+
 ## Question 9: Combination of Inputs
 
+[dashboard link]()
+
 ## Question 10:
+
+[dashboard link]()
