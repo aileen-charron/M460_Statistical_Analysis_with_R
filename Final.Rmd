@@ -35,12 +35,12 @@ output: html_document
 
 ## Question 8: dateRangeInput
 
-[dashboard link]()
+[dashboard link](https://aileencharron2.shinyapps.io/final_Q8_dateRangeInput/)
 
 ## Question 9: Combination of Inputs
 
-[dashboard link]()
+[dashboard link](https://aileencharron2.shinyapps.io/final_Q9/)
 
 ## Question 10:
 
-[dashboard link]()
+[dashboard link](https://aileencharron2.shinyapps.io/final_Q10/#section-restaurant-list)

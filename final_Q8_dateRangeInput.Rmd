@@ -1,0 +1,89 @@
+---
+title: "Restaurant - Radio Buttons"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    logo: logo.png
+    source_code: embed
+    social: menu
+
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(shiny)
+library(packrat)
+library(rsconnect)
+library(knitr)
+library(DT)
+df <- read_csv("https://aileen-charron.github.io/M460_Statistical_Analysis_with_R/food_order.csv")
+
+df <- df %>% 
+  filter(rating != "Not given")
+
+set.seed(123)
+date_sequence <- seq.Date(from =as.Date("2018-01-01"), to = as.Date("2024-12-12"), by = "day")
+df$review_date <- sample(date_sequence, size = nrow(df), replace = 
+                           TRUE)
+
+df$rating = factor(df$rating)
+
+food_weekday <- unique(df$day_of_the_week)
+
+df$date <-mdy(df$review_date)
+
+
+
+```
+
+#  {.sidebar}
+
+NYC Restaurants Data - Food Ordering and Delivery. Looking to see how ratings (1-5) vary by other factors.
+
+```{r}
+dateRangeInput(inputId = "date_input", 
+             label = h2("Date Range"),
+             start = min(df$review_date),
+             end = max(df$review_date),
+             min = min(df$review_date),
+             max = max(df$review_date))
+          
+```
+
+# Main Tab 1
+
+## Column {data-width="500"}
+
+### Frequency Plot
+
+```{r}
+renderPlotly(
+  p1 <- df %>% 
+    filter(review_date > input$date_input[1], review_date < input$date_input[2]) %>% 
+    ggplot(aes(x = rating)) +
+             geom_bar() +
+             labs(
+               title = "Frequency of Orders by Rating",
+               x = "Rating",
+               y = "Frequency"
+             ))
+```
+
+## Column {data-width="500"}
+
+### Density Plot
+
+```{r}
+renderPlotly({
+  p2 <- df %>% 
+    filter(review_date > input$date_input[1], review_date < input$date_input[2]) %>% 
+    ggplot(aes(x = delivery_time, color = rating)) +
+    geom_density()
+  ggplotly(p2)
+})
+```
