@@ -47,6 +47,10 @@ df_summary <- df_summary %>%
   mutate(num_reviews_5_plus = ifelse(num_ratings >= 5, "five or more", "less than five"))
 
 
+df_summary <- df_summary %>% 
+  mutate(four_plus_rating = ifelse(avg_rating>=4, "rated 4 or more", "rated less than 4"))
+
+
 review_five <- unique(df_summary$num_reviews_5_plus)
 ```
 
@@ -89,7 +93,7 @@ sliderInput(inputId = "time_input",
 
 # Restaurant List
 
-## Column {data-width="1000"}
+## Column {data-width="1000" .tabset}
 
 ### searchable table
 
@@ -98,6 +102,15 @@ datatable(df_summary, options = list(
   pageLength = 100
 ))
 ```
+
+
+### original data
+```{r}
+datatable(df, options = list(
+  pageLength = 100
+))
+```
+
 
 # Top 5 Restaurants
 
@@ -126,7 +139,7 @@ renderPlotly({p1 <-df_summary %>%
 
 ## Column {data-width="500"}
 
-### Average Rating of Top 5 Restaurants
+### Average Rating of Top 5 Restaurants by Rating
 
 ```{r}
 renderPlotly({p2 <- df_summary %>% 
@@ -168,7 +181,7 @@ ggplotly(p3) })
 
 ## Column {data-width="500"}
 
-### Average Cost
+### Average Total Time
 
 ```{r}
 renderPlotly({p4 <- df_summary %>% 
@@ -193,6 +206,16 @@ ggplotly(p4) })
 
 ### filter by
 
+```{r}
+radioButtons(inputId = "four_rating_input", 
+             label = h2("Select Ratings"),
+             choices = c("rated 4 or more", "rated less than 4"),
+             inline = TRUE,
+             selected = "rated 4 or more")
+```
+
+
+
 ## Column {data-width = "750"}
 
 ### Highest Cost Restaurants
@@ -203,6 +226,7 @@ renderPlotly({p5 <- df_summary %>%
         filter(num_reviews_5_plus == input$five_plus_input) %>% 
   filter(avg_cost_of_the_order>input$price_input[1], avg_cost_of_the_order<input$price_input[2]) %>% 
   filter(avg_total_time>input$time_input[1], avg_total_time<input$time_input[2]) %>% 
+    filter(four_plus_rating==input$four_rating_input) %>% 
   arrange(desc(avg_cost_of_the_order)) %>% 
   head(5) %>% 
   ggplot(aes(x = reorder(restaurant_name, -avg_cost_of_the_order), y = avg_cost_of_the_order)) + 
@@ -217,10 +241,26 @@ ggplotly(p5) })
 
 # Reflection
 
-## Column {data-width="500"}
+## Column {data-width="1000"}
 
 ### Reflection Paragraph
 
-## Column {data-width = "500"}
+Code Organization of the dashboard:
 
-### Planning Picture
+- helpful to switch between Source & Visual in R to identify where my pages, columns, and tabs start & end to keep everything where I want it
+
+- helpful to have consistent labeling for each part of the final assignment (ex: "final_Q1.rmd")
+
+Errors & Challenges: 
+
+- keeping code organized
+
+- switching between the two shiny accounts
+
+- debugging code
+
+- having my data set be stored on github and not locally
+
+Advice:
+
+- map out each page of the dashboard and what you want displayed on each page, column, tab
