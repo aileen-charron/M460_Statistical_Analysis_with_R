@@ -1,0 +1,134 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    logo: logo.png
+    source_code: embed
+    social: menu
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(shiny)
+library(packrat)
+library(rsconnect)
+library(knitr)
+library(DT)
+library(ggplot2)
+library(dplyr)
+df <- read_csv("https://aileen-charron.github.io/M460_Statistical_Analysis_with_R/food_order.csv")
+
+df <- df %>% 
+  filter(rating != "Not given")
+
+
+df_summary <- df %>%
+  group_by(restaurant_name, cuisine_type) %>%
+  summarise(
+    avg_cost_of_the_order = round(mean(cost_of_the_order, na.rm = TRUE), 2),  
+    avg_rating = round(mean(as.numeric(rating), na.rm = TRUE), 2),
+    avg_prep_time = round(mean(food_preparation_time, na.rm = TRUE), 0),  
+    avg_delivery_time = round(mean(delivery_time, na.rm = TRUE), 0),  
+    avg_total_time = round(avg_prep_time + avg_delivery_time, 0),     
+    num_ratings = sum(!is.na(rating) & rating != "Not given") 
+  ) %>%
+  select(
+    restaurant_name, cuisine_type, avg_cost_of_the_order, avg_rating, 
+    avg_prep_time, avg_delivery_time, avg_total_time, num_ratings  
+  )
+
+
+top_5 <- df_summary %>% 
+  arrange(desc(num_ratings)) %>% 
+  head(5)
+
+p1 <-top_5 %>%  ggplot(aes(x = reorder(restaurant_name, -num_ratings), y = num_ratings))+
+    geom_bar(stat = "identity") +
+    labs(
+      x = "Restaurant Name",
+      y = "Number of Ratings"
+    )+
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+p2 <- top_5 %>% ggplot(aes(x = reorder(restaurant_name, -num_ratings), y = avg_rating)) + 
+           geom_bar(stat = "identity") +
+           labs(x = "Restaurant Name",
+                y = "Average Rating") +
+           theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p3 <- top_5 %>% ggplot(aes(x = reorder(restaurant_name, -num_ratings), y = avg_cost_of_the_order)) + 
+           geom_bar(stat = "identity") +
+           labs(x = "Restaurant Name",
+                y = "Average Cost of Order") +
+           theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p4 <- top_5 %>% ggplot(aes(x = reorder(restaurant_name, -num_ratings), y = avg_total_time)) + 
+           geom_bar(stat = "identity") +
+           labs(x = "Restaurant Name",
+                y = "Average Total Time") +
+           theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+#  {.sidebar}
+
+NYC Restaurants Data - Food Ordering and Delivery. Looking to see how ratings (1-5) vary by other factors.
+
+# Restaurant List
+
+## Column {data-width="1000"}
+
+### searchable table
+
+```{r}
+datatable(df, options = list(
+  pageLength = 100
+))
+```
+
+# Top 5 Restaurants
+
+## Column {data-width="500"}
+
+### Top 5 Restaurants by Number of Ratings
+
+```{r}
+p1
+```
+
+## Column {data-width="500"}
+
+### Average Rating of Top 5 Restaurants
+
+```{r}
+p2
+```
+
+# Costs & Times
+
+## Column {data-width="500"}
+
+### Average Cost of Top 5 Restaurants
+
+```{r}
+p3
+
+```
+
+## Column {data-width="500"}
+
+### Average Cost of Top 5 Restaurants
+
+```{r}
+p4
+
+```

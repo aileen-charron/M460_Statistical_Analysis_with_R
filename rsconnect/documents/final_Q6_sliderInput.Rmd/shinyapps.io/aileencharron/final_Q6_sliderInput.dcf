@@ -5,7 +5,7 @@ account: aileencharron
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 13580826
-bundleId: 9505463
+bundleId: 9505711
 url: https://aileencharron.shinyapps.io/final_Q6_sliderInput/
 version: 1
 asMultiple: FALSE

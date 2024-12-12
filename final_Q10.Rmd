@@ -1,0 +1,153 @@
+---
+title: "NYC Restaurants"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    logo: logo.png
+    source_code: embed
+    social: menu
+
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(shiny)
+library(packrat)
+library(rsconnect)
+library(knitr)
+library(DT)
+df <- read_csv("https://aileen-charron.github.io/M460_Statistical_Analysis_with_R/food_order.csv")
+
+df <- df %>% 
+  filter(rating != "Not given")
+
+df_summary <- df %>%
+  group_by(restaurant_name, cuisine_type) %>%
+  summarise(
+    avg_cost_of_the_order = round(mean(cost_of_the_order, na.rm = TRUE), 2),  
+    avg_rating = round(mean(as.numeric(rating), na.rm = TRUE), 0),
+    avg_prep_time = round(mean(food_preparation_time, na.rm = TRUE), 0),  
+    avg_delivery_time = round(mean(delivery_time, na.rm = TRUE), 0),  
+    avg_total_time = round(avg_prep_time + avg_delivery_time, 0),     
+    num_ratings = sum(!is.na(rating) & rating != "Not given") 
+  ) %>%
+  select(
+    restaurant_name, cuisine_type, avg_cost_of_the_order, avg_rating, 
+    avg_prep_time, avg_delivery_time, avg_total_time, num_ratings  
+  )
+```
+
+#  {.sidebar}
+
+NYC Restaurants Data - Food Ordering and Delivery. Looking to see how ratings (1-5) vary by other factors.
+
+
+# Restaurants
+
+## Column {data-width="500"}
+
+### searchable table
+
+```{r}
+datatable(df_summary, options = list(
+  pageLength = 100
+))
+```
+
+## Column {data-width="250"}
+
+### filter by cuisine type
+
+```{r}
+checkboxGroupInput(inputId = "cuisine_type_input", 
+                   label = h3("Cuisine Type"),
+                   choices = unique(df$cuisine_type), 
+                   inline = TRUE,
+                   selected = 'S')
+```
+
+
+### filter by cost
+
+```{r}
+sliderInput(inputId = "price_input",
+            label = h2("Select Cost of Order"),
+            min = min(df$cost_of_the_order, na.rm=TRUE),
+            max = max(df$cost_of_the_order, na.rm=TRUE),
+            value= c(10, 20))
+```
+
+## Column {data-width="250"}
+
+### Average Delivery Time vs Rating 
+
+```{r}
+renderPlotly({
+  p2 <- df %>% 
+  filter(cuisine_type%in%input$cuisine_type_input) %>% 
+  group_by(rating) %>% 
+    filter(cost_of_the_order>input$price_input[1], cost_of_the_order<input$price_input[2]) %>% 
+  summarize(avg_delivery = mean(delivery_time)) %>% 
+    ggplot+
+    geom_col(mapping = aes(x = rating, y = avg_delivery), position = "dodge") 
+  ggplotly(p2)
+})
+```
+
+### Average Cost vs Rating
+```{r}
+renderPlotly({
+  p3 <- df %>% 
+  filter(cuisine_type%in%input$cuisine_type_input) %>%     filter(cost_of_the_order>input$price_input[1], cost_of_the_order<input$price_input[2]) %>% 
+  group_by(rating) %>% 
+  summarize(avg_cost = mean(cost_of_the_order)) %>% 
+    ggplot+
+    geom_col(mapping = aes(x = rating, y = avg_cost), position = "dodge") 
+  ggplotly(p3)
+})
+```
+
+
+# Times
+
+## Column {data-width="200"}
+
+### filter by avg prep time
+
+```{r}
+sliderInput(inputId = "prep_input",
+            label = h2("Select Prep Time"),
+            min = min(df_summary$avg_prep_time, na.rm=TRUE),
+            max = max(df_summary$avg_prep_time, na.rm=TRUE),
+            value= c(10, 20))
+```
+
+### filter by avg delivery time
+
+```{r}
+sliderInput(inputId = "delivery_input",
+            label = h2("Select Delivery Time"),
+            min = min(df_summary$avg_delivery_time, na.rm=TRUE),
+            max = max(df_summary$avg_delivery_time, na.rm=TRUE),
+            value= c(10, 20))
+```
+### filter by avg total time
+
+```{r}
+sliderInput(inputId = "total_input",
+            label = h2("Select Total Time"),
+            min = min(df_summary$avg_total_time, na.rm=TRUE),
+            max = max(df_summary$avg_total_time, na.rm=TRUE),
+            value= c(10, 20))
+```
+
+
+## Column {data-width="800"}
+
+
+# Third Tab
